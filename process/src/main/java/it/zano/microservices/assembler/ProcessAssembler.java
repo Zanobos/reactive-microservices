@@ -1,6 +1,6 @@
 package it.zano.microservices.assembler;
 
-import it.zano.microservices.controllers.process.ProcessesController;
+import it.zano.microservices.controllers.ProcessesController;
 import it.zano.microservices.layers.controller.rest.BaseAssembler;
 import it.zano.microservices.model.ProcessInfo;
 import it.zano.microservices.resources.ProcessResource;

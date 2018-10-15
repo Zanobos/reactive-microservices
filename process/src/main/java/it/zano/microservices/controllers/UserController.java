@@ -1,4 +1,4 @@
-package it.zano.microservices.controllers.user;
+package it.zano.microservices.controllers;
 
 import it.zano.microservices.layers.controller.rest.BaseAssembler;
 import it.zano.microservices.layers.controller.rest.BaseRestController;

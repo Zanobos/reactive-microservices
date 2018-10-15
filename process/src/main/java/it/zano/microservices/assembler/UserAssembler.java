@@ -1,6 +1,6 @@
 package it.zano.microservices.assembler;
 
-import it.zano.microservices.controllers.user.UserController;
+import it.zano.microservices.controllers.UserController;
 import it.zano.microservices.layers.controller.rest.BaseAssembler;
 import it.zano.microservices.model.User;
 import it.zano.microservices.resources.UserResource;
