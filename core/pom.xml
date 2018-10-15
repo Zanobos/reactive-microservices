@@ -19,6 +19,7 @@
         <springfox-swagger.version>2.9.2</springfox-swagger.version>
         <spring-ws.version>3.0.3.RELEASE</spring-ws.version>
         <spring-security-jwt.version>1.0.9.RELEASE</spring-security-jwt.version>
+        <spring-hateoas.version>0.24.0.RELEASE</spring-hateoas.version>
         <dozer.version>6.1.0</dozer.version>
         <commons-io.version>2.5</commons-io.version>
     </properties>
@@ -84,6 +85,11 @@
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
             <version>${springfox-swagger.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.hateoas</groupId>
+            <artifactId>spring-hateoas</artifactId>
+            <version>${spring-hateoas.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.dozermapper</groupId>
