@@ -16,6 +16,15 @@ paths:
       produces:
       - "application/json"
       parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          type: "object"
+          additionalProperties:
+            type: "array"
+            items:
+              type: "string"
       - name: "id"
         in: "path"
         required: true
@@ -33,6 +42,15 @@ paths:
       produces:
       - "application/json"
       parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          type: "object"
+          additionalProperties:
+            type: "array"
+            items:
+              type: "string"
       - name: "id"
         in: "path"
         required: true
