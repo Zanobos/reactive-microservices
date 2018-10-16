@@ -23,7 +23,7 @@ public class SwaggerConfiguration {
     @Value("${swagger.title:${spring.application.name}}")
     private String title;
 
-    @Value("${swagger.description:}")
+    @Value("${swagger.description:${spring.application.description}}")
     private String description;
 
     @Value("${swagger.version:${spring.application.version}}")

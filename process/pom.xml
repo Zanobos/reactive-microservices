@@ -5,6 +5,7 @@
 	<version>1.1.0</version>
 
 	<packaging>jar</packaging>
+	<description>Competence centre project process microservice</description>
 
 	<parent>
 		<groupId>it.zano.microservices</groupId>

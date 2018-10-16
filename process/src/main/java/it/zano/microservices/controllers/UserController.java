@@ -1,5 +1,6 @@
 package it.zano.microservices.controllers;
 
+import io.swagger.annotations.Api;
 import it.zano.microservices.layers.controller.rest.BaseAssembler;
 import it.zano.microservices.layers.controller.rest.BaseRestController;
 import it.zano.microservices.model.User;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author a.zanotti
  * @since 12/10/2018
  */
+@Api(tags = "users")
 @RestController
 @RequestMapping(value = "/users", produces = {MediaType.APPLICATION_JSON_VALUE})
 public class UserController extends BaseRestController<User,UserResource> {
@@ -35,3 +37,5 @@ public class UserController extends BaseRestController<User,UserResource> {
     }
 
 }
+
+

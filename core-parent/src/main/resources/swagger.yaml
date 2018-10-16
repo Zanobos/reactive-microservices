@@ -1,0 +1,6 @@
+---
+swagger: "2.0"
+info:
+  description: "Competence centre project parent"
+  version: "0.1.0"
+  title: "core-parent"

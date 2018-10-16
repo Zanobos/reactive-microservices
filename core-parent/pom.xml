@@ -8,6 +8,7 @@
     <artifactId>core-parent</artifactId>
     <version>0.1.0</version>
     <packaging>pom</packaging>
+    <description>Competence centre project parent</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -62,6 +63,36 @@
                 <configuration>
                     <mainClass>${start-class}</mainClass>
                     <finalName>${project.artifactId}</finalName>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.github.kongchen</groupId>
+                <artifactId>swagger-maven-plugin</artifactId>
+                <version>3.1.6 </version>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <apiSources>
+                        <apiSource>
+                            <springmvc>true</springmvc>
+                            <locations>
+                                <location>it.zano.microservices</location>
+                            </locations>
+                            <swaggerDirectory>${basedir}/src/main/resources</swaggerDirectory>
+                            <outputFormats>yaml</outputFormats>
+                            <info>
+                                <title>${project.name}</title>
+                                <version>${project.version}</version>
+                                <description>${project.description}</description>
+                            </info>
+                        </apiSource>
+                    </apiSources>
                 </configuration>
             </plugin>
         </plugins>

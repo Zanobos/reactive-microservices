@@ -1,0 +1,110 @@
+---
+swagger: "2.0"
+info:
+  description: "Competence centre project process microservice"
+  version: "1.1.0"
+  title: "process"
+tags:
+- name: "processes"
+- name: "users"
+paths:
+  /processes/{id}:
+    get:
+      tags:
+      - "processes"
+      operationId: "getProcess"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/ProcessResource"
+  /users/{id}:
+    get:
+      tags:
+      - "users"
+      operationId: "getUser"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/UserResource"
+definitions:
+  Link:
+    type: "object"
+    properties:
+      rel:
+        type: "string"
+        xml:
+          attribute: true
+      href:
+        type: "string"
+        xml:
+          attribute: true
+      hreflang:
+        type: "string"
+        xml:
+          attribute: true
+      media:
+        type: "string"
+        xml:
+          attribute: true
+      title:
+        type: "string"
+        xml:
+          attribute: true
+      type:
+        type: "string"
+        xml:
+          attribute: true
+      deprecation:
+        type: "string"
+        xml:
+          attribute: true
+  ProcessResource:
+    type: "object"
+    properties:
+      processCode:
+        type: "string"
+      processState:
+        type: "string"
+      links:
+        type: "array"
+        xml:
+          name: "link"
+          namespace: "http://www.w3.org/2005/Atom"
+        readOnly: true
+        items:
+          xml:
+            name: "link"
+          $ref: "#/definitions/Link"
+  UserResource:
+    type: "object"
+    properties:
+      firstName:
+        type: "string"
+      lastName:
+        type: "string"
+      links:
+        type: "array"
+        xml:
+          name: "link"
+          namespace: "http://www.w3.org/2005/Atom"
+        readOnly: true
+        items:
+          xml:
+            name: "link"
+          $ref: "#/definitions/Link"
