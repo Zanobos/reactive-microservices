@@ -1,16 +1,20 @@
 package it.zano.microservices.layers.controller.soa;
 
 
+import it.zano.microservices.exception.MicroServiceException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
+
 /**
  * @author a.zanotti
  * @since 12/10/2018
  */
 public abstract class BaseSoaController {
 
-    protected final ExecutorDispatcher executorDispatcher;
+    protected <REQ extends BaseSoaRequestPayload, RES extends BaseSoaResponsePayload, IREQ, IRES> ResponseEntity<RES>
+        apply(BaseSoaLogicExecutor<REQ, RES, IREQ, IRES> baseSoaLogicExecutor, HttpHeaders httpHeaders, REQ request) throws MicroServiceException {
 
-    protected BaseSoaController(ExecutorDispatcher executorDispatcher){
-        this.executorDispatcher = executorDispatcher;
+        return baseSoaLogicExecutor.execute(httpHeaders,request);
     }
 
 }
