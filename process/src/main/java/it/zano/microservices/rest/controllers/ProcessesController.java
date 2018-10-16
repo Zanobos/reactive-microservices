@@ -1,10 +1,10 @@
-package it.zano.microservices.controllers;
+package it.zano.microservices.rest.controllers;
 
 import io.swagger.annotations.Api;
 import it.zano.microservices.layers.controller.rest.BaseAssembler;
 import it.zano.microservices.layers.controller.rest.BaseRestController;
-import it.zano.microservices.model.User;
-import it.zano.microservices.resources.UserResource;
+import it.zano.microservices.model.ProcessInfo;
+import it.zano.microservices.rest.resources.ProcessResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,25 +17,23 @@ import org.springframework.web.bind.annotation.RestController;
  * @author a.zanotti
  * @since 12/10/2018
  */
-@Api(tags = "users")
+@Api(tags = "processes")
 @RestController
-@RequestMapping(value = "/users", produces = {MediaType.APPLICATION_JSON_VALUE})
-public class UserController extends BaseRestController<User,UserResource> {
+@RequestMapping(value = "/processes", produces = {MediaType.APPLICATION_JSON_VALUE})
+public class ProcessesController extends BaseRestController<ProcessInfo,ProcessResource> {
 
     @Autowired
-    protected UserController(BaseAssembler<User, UserResource> assembler) {
+    protected ProcessesController(BaseAssembler<ProcessInfo,ProcessResource> assembler) {
         super(assembler);
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<UserResource> getUser(@PathVariable(value = "id") String id){
-        User user = new User();
-        user.setFirstName("Andrea");
-        user.setLastName(id);
-        UserResource userResource = assembler.toResource(user);
+    public ResponseEntity<ProcessResource> getProcess(@PathVariable(value = "id") String id){
+        ProcessInfo process = new ProcessInfo();
+        process.setProcessCode("CA");
+        process.setProcessState("START");
+        ProcessResource userResource = assembler.toResource(process);
         return ResponseEntity.ok(userResource);
     }
 
 }
-
-

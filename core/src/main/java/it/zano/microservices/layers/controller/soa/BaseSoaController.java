@@ -7,4 +7,10 @@ package it.zano.microservices.layers.controller.soa;
  */
 public abstract class BaseSoaController {
 
+    protected final ExecutorDispatcher executorDispatcher;
+
+    protected BaseSoaController(ExecutorDispatcher executorDispatcher){
+        this.executorDispatcher = executorDispatcher;
+    }
+
 }
