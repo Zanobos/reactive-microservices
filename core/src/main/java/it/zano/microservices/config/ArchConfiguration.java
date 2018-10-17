@@ -56,9 +56,6 @@ public class ArchConfiguration {
 		return DozerBeanMapperBuilder.buildDefault();
 	}
 
-	/*
-	 * Stamp the version at startup
-	 */
 	@Bean
 	public CommandLineRunner commandLineRunner() {
 		return args -> logger.info("Started version: {}", buildVersion);

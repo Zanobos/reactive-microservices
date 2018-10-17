@@ -3,3 +3,9 @@ spring:
     name: @project.artifactId@
     version: @project.version@
     description: @project.description@
+  datasource:
+    url: "jdbc:mysql://localhost:3306/competence_centre?useSSL=false"
+    username: "root"
+    password: "zano"
+  jpa:
+    open-in-view: true
