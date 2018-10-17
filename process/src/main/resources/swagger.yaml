@@ -35,6 +35,33 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/ProcessResource"
+  /state/end:
+    post:
+      tags:
+      - "state"
+      operationId: "end"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          type: "object"
+          additionalProperties:
+            type: "array"
+            items:
+              type: "string"
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/StateEndRequest"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/StateEndResponse"
   /state/init:
     post:
       tags:
@@ -137,6 +164,13 @@ definitions:
           xml:
             name: "link"
           $ref: "#/definitions/Link"
+  StateEndRequest:
+    type: "object"
+  StateEndResponse:
+    type: "object"
+    properties:
+      status:
+        type: "string"
   StateInitRequest:
     type: "object"
   StateInitResponse:
