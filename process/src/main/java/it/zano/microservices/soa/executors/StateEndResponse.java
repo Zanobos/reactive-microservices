@@ -1,4 +1,4 @@
-package it.zano.microservices.soa;
+package it.zano.microservices.soa.executors;
 
 import it.zano.microservices.layers.controller.soa.BaseSoaResponsePayload;
 
@@ -6,7 +6,7 @@ import it.zano.microservices.layers.controller.soa.BaseSoaResponsePayload;
  * @author a.zanotti
  * @since 16/10/2018
  */
-public class StateInitResponse extends BaseSoaResponsePayload {
+public class StateEndResponse extends BaseSoaResponsePayload {
 
     private String status;
 

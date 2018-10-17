@@ -1,8 +1,9 @@
-package it.zano.microservices.soa;
+package it.zano.microservices.soa.controllers;
 
 import io.swagger.annotations.Api;
 import it.zano.microservices.exception.MicroServiceException;
 import it.zano.microservices.layers.controller.soa.BaseSoaController;
+import it.zano.microservices.soa.executors.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -24,11 +25,21 @@ public class StateController extends BaseSoaController{
         return apply(stateInitExecutorBaseSoa, httpHeaders, request);
     }
 
+    @PostMapping(value = "/end")
+    public ResponseEntity<StateEndResponse> end(@RequestHeader HttpHeaders httpHeaders,
+                                                @RequestBody StateEndRequest request) throws MicroServiceException {
+        return apply(stateEndExecutorBaseSoa, httpHeaders, request);
+    }
+
     @Autowired
-    public StateController(StateInitExecutorBaseSoa stateInitExecutorBaseSoa) {
+    public StateController(
+            StateInitExecutorBaseSoa stateInitExecutorBaseSoa,
+            StateEndExecutorBaseSoa stateEndExecutorBaseSoa) {
         this.stateInitExecutorBaseSoa = stateInitExecutorBaseSoa;
+        this.stateEndExecutorBaseSoa = stateEndExecutorBaseSoa;
     }
 
     private StateInitExecutorBaseSoa stateInitExecutorBaseSoa;
+    private StateEndExecutorBaseSoa stateEndExecutorBaseSoa;
 
 }
