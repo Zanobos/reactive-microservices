@@ -1,9 +1,9 @@
-package it.zano.microservices.assembler;
+package it.zano.microservices.rest.assembler;
 
-import it.zano.microservices.controllers.UserController;
+import it.zano.microservices.rest.controllers.UserController;
 import it.zano.microservices.layers.controller.rest.BaseAssembler;
 import it.zano.microservices.model.User;
-import it.zano.microservices.resources.UserResource;
+import it.zano.microservices.rest.resources.UserResource;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -6,6 +6,7 @@ info:
   title: "process"
 tags:
 - name: "processes"
+- name: "state"
 - name: "users"
 paths:
   /processes/{id}:
@@ -34,6 +35,33 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/ProcessResource"
+  /state/init:
+    post:
+      tags:
+      - "state"
+      operationId: "init"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          type: "object"
+          additionalProperties:
+            type: "array"
+            items:
+              type: "string"
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/StateInitRequest"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/StateInitResponse"
   /users/{id}:
     get:
       tags:
@@ -109,6 +137,13 @@ definitions:
           xml:
             name: "link"
           $ref: "#/definitions/Link"
+  StateInitRequest:
+    type: "object"
+  StateInitResponse:
+    type: "object"
+    properties:
+      status:
+        type: "string"
   UserResource:
     type: "object"
     properties:

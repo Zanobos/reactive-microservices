@@ -1,9 +1,9 @@
-package it.zano.microservices.assembler;
+package it.zano.microservices.rest.assembler;
 
-import it.zano.microservices.controllers.ProcessesController;
+import it.zano.microservices.rest.controllers.ProcessesController;
 import it.zano.microservices.layers.controller.rest.BaseAssembler;
 import it.zano.microservices.model.ProcessInfo;
-import it.zano.microservices.resources.ProcessResource;
+import it.zano.microservices.rest.resources.ProcessResource;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

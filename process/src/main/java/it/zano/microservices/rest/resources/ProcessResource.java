@@ -1,4 +1,4 @@
-package it.zano.microservices.resources;
+package it.zano.microservices.rest.resources;
 
 import it.zano.microservices.layers.controller.rest.BaseResource;
 

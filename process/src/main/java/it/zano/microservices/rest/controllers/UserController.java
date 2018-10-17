@@ -1,10 +1,10 @@
-package it.zano.microservices.controllers;
+package it.zano.microservices.rest.controllers;
 
 import io.swagger.annotations.Api;
 import it.zano.microservices.layers.controller.rest.BaseAssembler;
 import it.zano.microservices.layers.controller.rest.BaseRestController;
 import it.zano.microservices.model.User;
-import it.zano.microservices.resources.UserResource;
+import it.zano.microservices.rest.resources.UserResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
