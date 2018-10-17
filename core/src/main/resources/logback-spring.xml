@@ -7,17 +7,35 @@
     <property name="FILE_LOG_PATTERN" value="%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] [${appName},%X{X-B3-TraceId:-},%X{X-B3-SpanId:-},%X{X-B3-ParentSpanId:-}] [%X{Username:-}] %-5level %logger{36}.%M - %msg%n"/>
     <property name="CONSOLE_LOG_PATTERN" value="%d{dd-MM-yyyy HH:mm:ss.SSS} %magenta([%thread]) %green([${appName},%X{X-B3-TraceId:-},%X{X-B3-SpanId:-},%X{X-B3-ParentSpanId:-}]) %yellow([%X{Username:-}]) %highlight(%-5level) %logger{36}.%M - %msg%n"/>
 
-    <springProfile name="default">
+    <!-- always to console -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
 
-        <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <root level="info">
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+    <!-- to log file only if asked -->
+    <springProfile name="log">
+        <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOG_FILE}.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <!-- rollover daily -->
+                <fileNamePattern>${LOG_FILE}.%d.log.gz</fileNamePattern>
+                <maxHistory>30</maxHistory>
+                <totalSizeCap>2GB</totalSizeCap>
+            </rollingPolicy>
             <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-                <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+                <pattern>${FILE_LOG_PATTERN}</pattern>
             </encoder>
         </appender>
 
         <root level="info">
-            <appender-ref ref="STDOUT"/>
+            <appender-ref ref="FILE"/>
         </root>
-
     </springProfile>
+
 </configuration>

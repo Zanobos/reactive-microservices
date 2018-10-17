@@ -4,7 +4,7 @@ package it.zano.microservices.exception;
 import java.util.List;
 
 public class MicroServiceException extends Exception {
-	private static final long serialVersionUID = 42L;
+
     private Error mainError;
     private List<Error> errors;
 
