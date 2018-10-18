@@ -1,10 +1,10 @@
-package it.zano.microservices.layers.controller.soa;
+package it.zano.microservices.controller.soa;
 
 import it.zano.microservices.util.JsonUtils;
 
 import java.io.Serializable;
 
-public class BaseSoaRequestPayload implements Serializable{
+public class BaseSoaResponsePayload implements Serializable {
 
 	private static final long serialVersionUID = 42L;
 

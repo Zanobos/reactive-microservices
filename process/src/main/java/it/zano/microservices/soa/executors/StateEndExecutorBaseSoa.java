@@ -1,6 +1,6 @@
 package it.zano.microservices.soa.executors;
 
-import it.zano.microservices.layers.controller.soa.BaseSoaLogicExecutor;
+import it.zano.microservices.controller.soa.BaseSoaLogicExecutor;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

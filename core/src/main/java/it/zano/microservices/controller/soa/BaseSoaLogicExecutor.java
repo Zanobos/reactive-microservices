@@ -1,4 +1,4 @@
-package it.zano.microservices.layers.controller.soa;
+package it.zano.microservices.controller.soa;
 
 import it.zano.microservices.exception.MicroServiceException;
 import org.dozer.Mapper;
@@ -64,8 +64,8 @@ public abstract class BaseSoaLogicExecutor<REQ extends BaseSoaRequestPayload,RES
     @SuppressWarnings("unchecked")
     private <T> T instantiate(int genericTypeNumber) throws MicroServiceException {
         try {
-            return (T) ((Class)((ParameterizedType) this.getClass().
-                    getGenericSuperclass()).getActualTypeArguments()[genericTypeNumber]).newInstance();
+            return (T) ((Class)((ParameterizedType) this.getClass().getGenericSuperclass())
+                    .getActualTypeArguments()[genericTypeNumber]).newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
             throw new MicroServiceException(e.getMessage());
         }

@@ -1,4 +1,4 @@
-package it.zano.microservices.layers.controller.rest;
+package it.zano.microservices.controller.rest;
 
 public abstract class BaseRestController<T, D extends BaseResource> {
 

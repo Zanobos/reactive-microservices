@@ -1,8 +1,8 @@
 package it.zano.microservices.rest.assembler;
 
 import it.zano.microservices.rest.controllers.ProcessesController;
-import it.zano.microservices.layers.controller.rest.BaseAssembler;
-import it.zano.microservices.model.ProcessInfo;
+import it.zano.microservices.controller.rest.BaseAssembler;
+import it.zano.microservices.model.entities.ProcessInfo;
 import it.zano.microservices.rest.resources.ProcessResource;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class ProcessAssembler extends BaseAssembler<ProcessInfo,ProcessResource>
 
     @Override
     public ProcessResource toResource(ProcessInfo process) {
-        ProcessResource processResource = createResourceWithId(process.getProcessCode(),process);
+        ProcessResource processResource = createResourceWithId(process.getId(),process);
         mapper.map(process,processResource);
         return processResource;
     }

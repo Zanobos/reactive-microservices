@@ -1,6 +1,6 @@
 package it.zano.microservices.soa.executors;
 
-import it.zano.microservices.layers.controller.soa.BaseSoaResponsePayload;
+import it.zano.microservices.controller.soa.BaseSoaResponsePayload;
 
 /**
  * @author a.zanotti

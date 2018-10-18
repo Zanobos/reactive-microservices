@@ -2,7 +2,7 @@ package it.zano.microservices.soa.controllers;
 
 import io.swagger.annotations.Api;
 import it.zano.microservices.exception.MicroServiceException;
-import it.zano.microservices.layers.controller.soa.BaseSoaController;
+import it.zano.microservices.controller.soa.BaseSoaController;
 import it.zano.microservices.soa.executors.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;

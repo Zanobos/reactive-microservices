@@ -1,4 +1,4 @@
-package it.zano.microservices.layers.controller.soa;
+package it.zano.microservices.controller.soa;
 
 
 import it.zano.microservices.exception.MicroServiceException;

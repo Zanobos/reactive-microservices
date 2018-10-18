@@ -29,7 +29,8 @@ paths:
       - name: "id"
         in: "path"
         required: true
-        type: "string"
+        type: "integer"
+        format: "int32"
       responses:
         200:
           description: "successful operation"
@@ -109,7 +110,8 @@ paths:
       - name: "id"
         in: "path"
         required: true
-        type: "string"
+        type: "integer"
+        format: "int32"
       responses:
         200:
           description: "successful operation"

@@ -1,6 +1,6 @@
 package it.zano.microservices.rest.resources;
 
-import it.zano.microservices.layers.controller.rest.BaseResource;
+import it.zano.microservices.controller.rest.BaseResource;
 
 /**
  * @author a.zanotti

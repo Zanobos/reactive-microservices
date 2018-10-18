@@ -1,4 +1,4 @@
-package it.zano.microservices.layers.controller.rest;
+package it.zano.microservices.controller.rest;
 
 import org.dozer.Mapper;
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport;

@@ -1,12 +1,23 @@
-package it.zano.microservices.model;
+package it.zano.microservices.model.entities;
+
+import it.zano.microservices.model.BaseEntity;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * @author a.zanotti
  * @since 15/10/2018
  */
-public class ProcessInfo {
+@Entity
+@Table(name = "processes")
+public class ProcessInfo extends BaseEntity {
 
+    @Column(name = "process_code")
     private String processCode;
+
+    @Column(name = "process_state")
     private String processState;
 
     public String getProcessCode() {

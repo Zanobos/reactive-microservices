@@ -1,9 +1,11 @@
 package it.zano.microservices.rest.controllers;
 
 import io.swagger.annotations.Api;
-import it.zano.microservices.layers.controller.rest.BaseAssembler;
-import it.zano.microservices.layers.controller.rest.BaseRestController;
-import it.zano.microservices.model.User;
+import it.zano.microservices.controller.rest.BaseAssembler;
+import it.zano.microservices.controller.rest.BaseRestController;
+import it.zano.microservices.exception.MicroServiceException;
+import it.zano.microservices.model.entities.User;
+import it.zano.microservices.model.repositories.UserRepository;
 import it.zano.microservices.rest.resources.UserResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -21,18 +23,19 @@ import org.springframework.web.bind.annotation.*;
 public class UserController extends BaseRestController<User,UserResource> {
 
     @Autowired
-    protected UserController(BaseAssembler<User, UserResource> assembler) {
+    protected UserController(BaseAssembler<User, UserResource> assembler, UserRepository userRepository) {
         super(assembler);
+        this.userRepository = userRepository;
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<UserResource> getUser(@RequestHeader HttpHeaders httpHeaders, @PathVariable(value = "id") String id){
-        User user = new User();
-        user.setFirstName("Andrea");
-        user.setLastName(id);
+    public ResponseEntity<UserResource> getUser(@RequestHeader HttpHeaders httpHeaders, @PathVariable(value = "id") Integer id) throws MicroServiceException {
+        User user = userRepository.findById(id).orElseThrow(() -> new MicroServiceException("Not found"));
         UserResource userResource = assembler.toResource(user);
         return ResponseEntity.ok(userResource);
     }
+
+    private final UserRepository userRepository;
 
 }
 

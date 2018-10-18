@@ -1,4 +1,4 @@
-package it.zano.microservices.layers.controller.rest;
+package it.zano.microservices.controller.rest;
 
 import it.zano.microservices.util.JsonUtils;
 import org.springframework.hateoas.ResourceSupport;
