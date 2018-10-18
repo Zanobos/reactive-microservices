@@ -13,6 +13,7 @@
         <module>core</module>
         <module>core-parent</module>
         <module>process</module>
+        <module>document</module>
     </modules>
 
 </project>

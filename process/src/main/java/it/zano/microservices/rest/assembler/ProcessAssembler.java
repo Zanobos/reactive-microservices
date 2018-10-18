@@ -26,4 +26,11 @@ public class ProcessAssembler extends BaseAssembler<ProcessInfo,ProcessResource>
         mapper.map(process,processResource);
         return processResource;
     }
+
+    @Override
+    public ProcessInfo toModelClass(ProcessResource resource) {
+        ProcessInfo processInfo = new ProcessInfo();
+        mapper.map(resource,processInfo);
+        return processInfo;
+    }
 }

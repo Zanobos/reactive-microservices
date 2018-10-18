@@ -26,4 +26,11 @@ public class UserAssembler extends BaseAssembler<User, UserResource> {
         mapper.map(user,userResource);
         return userResource;
     }
+
+    @Override
+    public User toModelClass(UserResource resource) {
+        User user = new User();
+        mapper.map(resource,user);
+        return user;
+    }
 }

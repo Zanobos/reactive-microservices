@@ -15,4 +15,6 @@ public abstract class BaseAssembler<T,D extends BaseResource> extends ResourceAs
         super(controllerClass, resourceType);
         this.mapper = mapper;
     }
+
+    public abstract T toModelClass(D resource);
 }

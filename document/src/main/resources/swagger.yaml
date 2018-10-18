@@ -1,0 +1,192 @@
+---
+swagger: "2.0"
+info:
+  description: "Competence centre project process microservice"
+  version: "1.1.0"
+  title: "document"
+tags:
+- name: "documents"
+paths:
+  /documents:
+    get:
+      tags:
+      - "documents"
+      operationId: "getDocuments"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          type: "object"
+          additionalProperties:
+            type: "array"
+            items:
+              type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/DocumentResource"
+    post:
+      tags:
+      - "documents"
+      operationId: "postDocument"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          type: "object"
+          additionalProperties:
+            type: "array"
+            items:
+              type: "string"
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/DocumentResource"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/DocumentResource"
+  /documents/{id}:
+    get:
+      tags:
+      - "documents"
+      operationId: "getDocument"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          type: "object"
+          additionalProperties:
+            type: "array"
+            items:
+              type: "string"
+      - name: "id"
+        in: "path"
+        required: true
+        type: "integer"
+        format: "int32"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/DocumentResource"
+    delete:
+      tags:
+      - "documents"
+      operationId: "deleteDocument"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          type: "object"
+          additionalProperties:
+            type: "array"
+            items:
+              type: "string"
+      - name: "id"
+        in: "path"
+        required: true
+        type: "integer"
+        format: "int32"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/DocumentResource"
+    patch:
+      tags:
+      - "documents"
+      operationId: "patchDocument"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          type: "object"
+          additionalProperties:
+            type: "array"
+            items:
+              type: "string"
+      - name: "id"
+        in: "path"
+        required: true
+        type: "integer"
+        format: "int32"
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/DocumentResource"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/DocumentResource"
+definitions:
+  DocumentResource:
+    type: "object"
+    properties:
+      documentTitle:
+        type: "string"
+      signature:
+        type: "string"
+      links:
+        type: "array"
+        xml:
+          name: "link"
+          namespace: "http://www.w3.org/2005/Atom"
+        readOnly: true
+        items:
+          xml:
+            name: "link"
+          $ref: "#/definitions/Link"
+  Link:
+    type: "object"
+    properties:
+      rel:
+        type: "string"
+        xml:
+          attribute: true
+      href:
+        type: "string"
+        xml:
+          attribute: true
+      hreflang:
+        type: "string"
+        xml:
+          attribute: true
+      media:
+        type: "string"
+        xml:
+          attribute: true
+      title:
+        type: "string"
+        xml:
+          attribute: true
+      type:
+        type: "string"
+        xml:
+          attribute: true
+      deprecation:
+        type: "string"
+        xml:
+          attribute: true
