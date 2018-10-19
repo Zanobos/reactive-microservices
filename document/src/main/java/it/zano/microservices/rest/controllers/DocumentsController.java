@@ -3,6 +3,7 @@ package it.zano.microservices.rest.controllers;
 import io.swagger.annotations.Api;
 import it.zano.microservices.controller.rest.BaseAssembler;
 import it.zano.microservices.controller.rest.BaseRestController;
+import it.zano.microservices.event.DocumentsEventController;
 import it.zano.microservices.exception.MicroServiceException;
 import it.zano.microservices.model.entities.Document;
 import it.zano.microservices.model.repositories.DocumentRepository;
@@ -25,9 +26,12 @@ import java.util.List;
 public class DocumentsController extends BaseRestController<Document,DocumentResource> {
 
     @Autowired
-    protected DocumentsController(BaseAssembler<Document,DocumentResource> assembler, DocumentRepository documentRepository) {
+    protected DocumentsController(BaseAssembler<Document,DocumentResource> assembler,
+                                  DocumentRepository documentRepository,
+                                  DocumentsEventController rabbitController) {
         super(assembler);
         this.documentRepository = documentRepository;
+        this.rabbitController = rabbitController;
     }
 
     @GetMapping(value = "/{id}")
@@ -51,7 +55,10 @@ public class DocumentsController extends BaseRestController<Document,DocumentRes
                                                           @RequestBody DocumentResource documentResource) throws MicroServiceException {
         Document document = documentRepository.findById(id).orElseThrow(() -> new MicroServiceException("Not found"));
         String signature = documentResource.getSignature();
-        if(!signature.equals(document.getSignatureExpected())) throw new MicroServiceException("Signature invalid");
+        if(!signature.equals(document.getSignatureExpected())) {
+            rabbitController.errorInSign(""+id);
+            throw new MicroServiceException("Signature invalid");
+        }
         document.setSignatureActual(signature);
         Document documentSaved = documentRepository.save(document);
         DocumentResource documentResourceOutput = assembler.toResource(documentSaved);
@@ -76,4 +83,5 @@ public class DocumentsController extends BaseRestController<Document,DocumentRes
 
 
     private final DocumentRepository documentRepository;
+    private final DocumentsEventController rabbitController;
 }

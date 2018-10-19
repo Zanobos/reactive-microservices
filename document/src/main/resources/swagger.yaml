@@ -6,6 +6,9 @@ info:
   title: "document"
 tags:
 - name: "documents"
+- name: "processes"
+- name: "state"
+- name: "users"
 paths:
   /documents:
     get:
@@ -141,6 +144,114 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/DocumentResource"
+  /processes/{id}:
+    get:
+      tags:
+      - "processes"
+      operationId: "getProcess"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          type: "object"
+          additionalProperties:
+            type: "array"
+            items:
+              type: "string"
+      - name: "id"
+        in: "path"
+        required: true
+        type: "integer"
+        format: "int32"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/ProcessResource"
+  /state/end:
+    post:
+      tags:
+      - "state"
+      operationId: "end"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          type: "object"
+          additionalProperties:
+            type: "array"
+            items:
+              type: "string"
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/StateEndRequest"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/StateEndResponse"
+  /state/init:
+    post:
+      tags:
+      - "state"
+      operationId: "init"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          type: "object"
+          additionalProperties:
+            type: "array"
+            items:
+              type: "string"
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/StateInitRequest"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/StateInitResponse"
+  /users/{id}:
+    get:
+      tags:
+      - "users"
+      operationId: "getUser"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          type: "object"
+          additionalProperties:
+            type: "array"
+            items:
+              type: "string"
+      - name: "id"
+        in: "path"
+        required: true
+        type: "integer"
+        format: "int32"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/UserResource"
 definitions:
   DocumentResource:
     type: "object"
@@ -190,3 +301,51 @@ definitions:
         type: "string"
         xml:
           attribute: true
+  ProcessResource:
+    type: "object"
+    properties:
+      processCode:
+        type: "string"
+      processState:
+        type: "string"
+      links:
+        type: "array"
+        xml:
+          name: "link"
+          namespace: "http://www.w3.org/2005/Atom"
+        readOnly: true
+        items:
+          xml:
+            name: "link"
+          $ref: "#/definitions/Link"
+  StateEndRequest:
+    type: "object"
+  StateEndResponse:
+    type: "object"
+    properties:
+      status:
+        type: "string"
+  StateInitRequest:
+    type: "object"
+  StateInitResponse:
+    type: "object"
+    properties:
+      status:
+        type: "string"
+  UserResource:
+    type: "object"
+    properties:
+      firstName:
+        type: "string"
+      lastName:
+        type: "string"
+      links:
+        type: "array"
+        xml:
+          name: "link"
+          namespace: "http://www.w3.org/2005/Atom"
+        readOnly: true
+        items:
+          xml:
+            name: "link"
+          $ref: "#/definitions/Link"
