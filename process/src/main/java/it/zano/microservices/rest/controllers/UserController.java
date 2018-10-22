@@ -35,6 +35,14 @@ public class UserController extends BaseRestController<User,UserResource> {
         return ResponseEntity.ok(userResource);
     }
 
+    @PostMapping
+    public ResponseEntity<UserResource> postUser(@RequestHeader HttpHeaders httpHeaders, @RequestBody UserResource userResource) {
+        User user = assembler.toModelClass(userResource);
+        User userSaved = userRepository.save(user);
+        UserResource resource = assembler.toResource(userSaved);
+        return ResponseEntity.ok(resource);
+    }
+
     private final UserRepository userRepository;
 
 }
