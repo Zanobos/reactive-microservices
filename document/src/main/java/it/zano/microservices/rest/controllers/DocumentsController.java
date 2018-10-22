@@ -52,15 +52,16 @@ public class DocumentsController extends BaseRestController<Document,DocumentRes
     @PatchMapping(value = "/{id}")
     public ResponseEntity<DocumentResource> patchDocument(@RequestHeader HttpHeaders httpHeaders,
                                                           @PathVariable(value = "id") Integer id,
-                                                          @RequestBody DocumentResource documentResource) throws MicroServiceException {
+                                                          @RequestBody DocumentResource documentResource,
+                                                          @RequestParam String userId) throws MicroServiceException {
         Document document = documentRepository.findById(id).orElseThrow(() -> new MicroServiceException("Not found"));
         String signature = documentResource.getSignature();
         if(!signature.equals(document.getSignatureExpected())) {
-            rabbitController.errorInSign(""+id);
             throw new MicroServiceException("Signature invalid");
         }
         document.setSignatureActual(signature);
         Document documentSaved = documentRepository.save(document);
+        rabbitController.signedDocumentFor(""+id,userId);
         DocumentResource documentResourceOutput = assembler.toResource(documentSaved);
         return ResponseEntity.ok(documentResourceOutput);
     }

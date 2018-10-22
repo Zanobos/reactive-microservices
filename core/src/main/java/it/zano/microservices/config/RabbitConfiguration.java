@@ -10,34 +10,46 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.RabbitListenerEndpointRegistrar;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.handler.annotation.support.DefaultMessageHandlerMethodFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author a.zanotti
  * @since 19/10/2018
  */
-@Configuration
-public class RabbitConfiguration implements RabbitListenerConfigurer {
+public abstract class RabbitConfiguration implements RabbitListenerConfigurer {
 
-    public static final String ROLLBACK_TOPIC = "rollback";
+    public static final String ROLLBACK_EXCHANGE = "rollback";
     public static final String FANOUT_ROUTING = "";
     public static final String ROLLBACK_QUEUE = "rollback";
 
-    @Bean
-    public FanoutExchange rollbackExchange() {
-        return new FanoutExchange(ROLLBACK_TOPIC);
+    protected final FanoutExchange rollbackExchange;
+    protected final Queue rollbackQueue;
+
+    public RabbitConfiguration() {
+        rollbackExchange = new FanoutExchange(ROLLBACK_EXCHANGE);
+        rollbackQueue = new Queue(ROLLBACK_QUEUE);
     }
 
-    @Bean
-    public Queue rollbackQueue() {
-        return new Queue(ROLLBACK_QUEUE);
+    protected List<FanoutExchange> fanoutExchanges() {
+        List<FanoutExchange> fanoutExchanges = new ArrayList<>();
+        fanoutExchanges.add(rollbackExchange);
+        return fanoutExchanges;
     }
 
-    @Bean
-    public Binding binding(FanoutExchange fanoutExchange) {
-        return BindingBuilder.bind(rollbackQueue()).to(fanoutExchange);
+    protected List<Queue> queues() {
+        List<Queue> queues = new ArrayList<>();
+        queues.add(rollbackQueue);
+        return queues;
+    }
+
+    protected List<Binding> bindings() {
+        List<Binding> bindings = new ArrayList<>();
+        bindings.add(BindingBuilder.bind(rollbackQueue).to(rollbackExchange));
+        return bindings;
     }
 
 

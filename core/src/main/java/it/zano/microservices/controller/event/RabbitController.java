@@ -9,13 +9,13 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
  */
 public abstract class RabbitController {
 
-    private RabbitTemplate rabbitTemplate;
+    protected RabbitTemplate rabbitTemplate;
 
     public RabbitController(RabbitTemplate rabbitTemplate) {
         this.rabbitTemplate = rabbitTemplate;
     }
 
     public void sendToErrorExchange(ErrorMessage errorMessage) {
-        this.rabbitTemplate.convertAndSend(RabbitConfiguration.ROLLBACK_TOPIC,RabbitConfiguration.FANOUT_ROUTING, errorMessage);
+        this.rabbitTemplate.convertAndSend(RabbitConfiguration.ROLLBACK_EXCHANGE,RabbitConfiguration.FANOUT_ROUTING, errorMessage);
     }
 }
