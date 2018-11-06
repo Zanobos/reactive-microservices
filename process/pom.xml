@@ -14,4 +14,34 @@
 		<relativePath>../core-parent</relativePath>
 	</parent>
 
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.jvnet.jaxb2.maven2</groupId>
+				<artifactId>maven-jaxb2-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>1</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<generatePackage>it.zano.microservices.gen.person</generatePackage>
+							<schemas>
+								<schema>
+									<fileset>
+										<directory>${basedir}/src/main/resources/wsdl</directory>
+										<includes>
+											<include>person.wsdl</include>
+										</includes>
+									</fileset>
+								</schema>
+							</schemas>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
 </project>

@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:tns="http://freewebservicesx.com/"
+                  xmlns:s1="http://SDNWEBSERVICE/" xmlns:s="http://www.w3.org/2001/XMLSchema"
+                  xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+                  xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" targetNamespace="http://freewebservicesx.com/"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">This web services is created for Money Transfer
+        Businesses in US to meet the requirements of the US Treasury Department s Office of Foreign Asset Control
+        (OFAC).OFAC restricts transactions with specific countries, organizations and individuals. The Office of Foreign
+        Assets Control (OFAC) of the US Department of the Treasury administers and enforces economic and trade sanctions
+        based on US foreign policy and national security goals against targeted foreign countries, terrorists,
+        international narcotics traffickers, and those engaged in activities related to the proliferation of weapons of
+        mass destruction. OFAC acts under Presidential wartime and national emergency powers, as well as authority
+        granted by specific legislation, to impose controls on transactions and freeze foreign assets under US
+        jurisdiction. This WebService checks in SDNLIST Provided by OFAC ,for the Blocked Person (Both FirstName and
+        Last Name) in Method (CheckBlockedNames)or the Corporation (Only Last Name) in Method (CheckBlockedEntities) and
+        you can Get the Blockedlist of Persons within the tolerance (Levensthine Distance) in
+        Method(CheckBlockedNamesWithTolerance)
+    </wsdl:documentation>
+    <wsdl:types>
+        <s:schema elementFormDefault="qualified" targetNamespace="http://freewebservicesx.com/">
+            <s:import namespace="http://SDNWEBSERVICE/"/>
+            <s:element name="CheckBlockedEntities">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" maxOccurs="1" name="LastName" type="s:string"/>
+                        <s:element minOccurs="0" maxOccurs="1" name="UserName" type="s:string"/>
+                        <s:element minOccurs="0" maxOccurs="1" name="Password" type="s:string"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="CheckBlockedEntitiesResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="1" maxOccurs="1" name="CheckBlockedEntitiesResult" type="s:boolean"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="CheckBlockedNames">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" maxOccurs="1" name="FirstName" type="s:string"/>
+                        <s:element minOccurs="0" maxOccurs="1" name="LastName" type="s:string"/>
+                        <s:element minOccurs="0" maxOccurs="1" name="UserName" type="s:string"/>
+                        <s:element minOccurs="0" maxOccurs="1" name="Password" type="s:string"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="CheckBlockedNamesResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="1" maxOccurs="1" name="CheckBlockedNamesResult" type="s:boolean"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="CheckBlockedNamesWithTolerance">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" maxOccurs="1" name="FirstName" type="s:string"/>
+                        <s:element minOccurs="0" maxOccurs="1" name="LastName" type="s:string"/>
+                        <s:element minOccurs="1" maxOccurs="1" name="Tolerance" type="s:int"/>
+                        <s:element minOccurs="0" maxOccurs="1" name="UserName" type="s:string"/>
+                        <s:element minOccurs="0" maxOccurs="1" name="Password" type="s:string"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="CheckBlockedNamesWithToleranceResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" maxOccurs="1" name="CheckBlockedNamesWithToleranceResult"
+                                   type="tns:ArrayOfBLOCKLISTTolerance"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="ArrayOfBLOCKLISTTolerance">
+                <s:sequence>
+                    <s:element minOccurs="0" maxOccurs="unbounded" name="BLOCKLISTTolerance"
+                               type="s1:BLOCKLISTTolerance"/>
+                </s:sequence>
+            </s:complexType>
+        </s:schema>
+        <s:schema elementFormDefault="qualified" targetNamespace="http://SDNWEBSERVICE/">
+            <s:complexType name="BLOCKLISTTolerance">
+                <s:sequence>
+                    <s:element minOccurs="1" maxOccurs="1" name="Tolerance" type="s:int"/>
+                    <s:element minOccurs="0" maxOccurs="1" name="FirstName" type="s:string"/>
+                    <s:element minOccurs="0" maxOccurs="1" name="LastName" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+        </s:schema>
+    </wsdl:types>
+    <wsdl:message name="CheckBlockedEntitiesSoapIn">
+        <wsdl:part name="parameters" element="tns:CheckBlockedEntities"/>
+    </wsdl:message>
+    <wsdl:message name="CheckBlockedEntitiesSoapOut">
+        <wsdl:part name="parameters" element="tns:CheckBlockedEntitiesResponse"/>
+    </wsdl:message>
+    <wsdl:message name="CheckBlockedNamesSoapIn">
+        <wsdl:part name="parameters" element="tns:CheckBlockedNames"/>
+    </wsdl:message>
+    <wsdl:message name="CheckBlockedNamesSoapOut">
+        <wsdl:part name="parameters" element="tns:CheckBlockedNamesResponse"/>
+    </wsdl:message>
+    <wsdl:message name="CheckBlockedNamesWithToleranceSoapIn">
+        <wsdl:part name="parameters" element="tns:CheckBlockedNamesWithTolerance"/>
+    </wsdl:message>
+    <wsdl:message name="CheckBlockedNamesWithToleranceSoapOut">
+        <wsdl:part name="parameters" element="tns:CheckBlockedNamesWithToleranceResponse"/>
+    </wsdl:message>
+    <wsdl:portType name="CheckSDNBlockedPersonSoap">
+        <wsdl:operation name="CheckBlockedEntities">
+            <wsdl:input message="tns:CheckBlockedEntitiesSoapIn"/>
+            <wsdl:output message="tns:CheckBlockedEntitiesSoapOut"/>
+        </wsdl:operation>
+        <wsdl:operation name="CheckBlockedNames">
+            <wsdl:input message="tns:CheckBlockedNamesSoapIn"/>
+            <wsdl:output message="tns:CheckBlockedNamesSoapOut"/>
+        </wsdl:operation>
+        <wsdl:operation name="CheckBlockedNamesWithTolerance">
+            <wsdl:input message="tns:CheckBlockedNamesWithToleranceSoapIn"/>
+            <wsdl:output message="tns:CheckBlockedNamesWithToleranceSoapOut"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="CheckSDNBlockedPersonSoap" type="tns:CheckSDNBlockedPersonSoap">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="CheckBlockedEntities">
+            <soap:operation soapAction="http://freewebservicesx.com/CheckBlockedEntities" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="CheckBlockedNames">
+            <soap:operation soapAction="http://freewebservicesx.com/CheckBlockedNames" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="CheckBlockedNamesWithTolerance">
+            <soap:operation soapAction="http://freewebservicesx.com/CheckBlockedNamesWithTolerance" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="CheckSDNBlockedPersonSoap12" type="tns:CheckSDNBlockedPersonSoap">
+        <soap12:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="CheckBlockedEntities">
+            <soap12:operation soapAction="http://freewebservicesx.com/CheckBlockedEntities" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="CheckBlockedNames">
+            <soap12:operation soapAction="http://freewebservicesx.com/CheckBlockedNames" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="CheckBlockedNamesWithTolerance">
+            <soap12:operation soapAction="http://freewebservicesx.com/CheckBlockedNamesWithTolerance" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="CheckSDNBlockedPerson">
+        <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">This web services is created for Money
+            Transfer Businesses in US to meet the requirements of the US Treasury Department s Office of Foreign Asset
+            Control (OFAC).OFAC restricts transactions with specific countries, organizations and individuals. The
+            Office of Foreign Assets Control (OFAC) of the US Department of the Treasury administers and enforces
+            economic and trade sanctions based on US foreign policy and national security goals against targeted foreign
+            countries, terrorists, international narcotics traffickers, and those engaged in activities related to the
+            proliferation of weapons of mass destruction. OFAC acts under Presidential wartime and national emergency
+            powers, as well as authority granted by specific legislation, to impose controls on transactions and freeze
+            foreign assets under US jurisdiction. This WebService checks in SDNLIST Provided by OFAC ,for the Blocked
+            Person (Both FirstName and Last Name) in Method (CheckBlockedNames)or the Corporation (Only Last Name) in
+            Method (CheckBlockedEntities) and you can Get the Blockedlist of Persons within the tolerance (Levensthine
+            Distance) in Method(CheckBlockedNamesWithTolerance)
+        </wsdl:documentation>
+        <wsdl:port name="CheckSDNBlockedPersonSoap" binding="tns:CheckSDNBlockedPersonSoap">
+            <soap:address location="http://www.freewebservicesx.com/freewebservices/CheckSDNBlockedPerson.asmx"/>
+        </wsdl:port>
+        <wsdl:port name="CheckSDNBlockedPersonSoap12" binding="tns:CheckSDNBlockedPersonSoap12">
+            <soap12:address location="http://www.freewebservicesx.com/freewebservices/CheckSDNBlockedPerson.asmx"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>
