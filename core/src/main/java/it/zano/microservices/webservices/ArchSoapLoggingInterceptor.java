@@ -14,20 +14,25 @@ import java.nio.charset.StandardCharsets;
 
 public class ArchSoapLoggingInterceptor extends ClientInterceptorAdapter {
 
+    private static final Logger logger = LoggerFactory.getLogger(ArchSoapLoggingInterceptor.class);
+    private static final int DEFAULT_MAX_LENGTH = 300000;
+
     private String serviceName;
-    private static final int MAX_LENGTH = 3000000;
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private String endpoint;
+    private int maxLength;
 
 
-    public ArchSoapLoggingInterceptor(String serviceName) {
+    ArchSoapLoggingInterceptor(String serviceName, String endpoint, Integer maxLoggingLength) {
         this.serviceName = serviceName;
+        this.endpoint = endpoint;
+        this.maxLength = maxLoggingLength != null ? maxLoggingLength : DEFAULT_MAX_LENGTH;
     }
 
 
     @Override
     public boolean handleRequest(MessageContext messageContext) throws WebServiceClientException {
         String message = extractMessage(messageContext.getRequest());
-        logger.info("{}, request: {}", serviceName, LogMaskUtils.maskFields(message));
+        logger.info("{}, uri: {}, request: {}", serviceName, endpoint, LogMaskUtils.maskFields(message));
         return true;
     }
 
@@ -47,12 +52,12 @@ public class ArchSoapLoggingInterceptor extends ClientInterceptorAdapter {
 
 
     private String extractMessage(WebServiceMessage soapMessage) {
-        String message = "";
+        String message;
         try {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             soapMessage.writeTo(stream);
             int size = stream.size();
-            if(size <= MAX_LENGTH)
+            if(size <= maxLength)
                 message = stream.toString(StandardCharsets.ISO_8859_1.name());
             else
                 message = "[Request too long: "+ size +" bytes]";
