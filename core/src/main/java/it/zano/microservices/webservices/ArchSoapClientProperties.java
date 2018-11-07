@@ -10,6 +10,7 @@ public abstract class ArchSoapClientProperties {
     private String endpoint;
     private String contextPath;
     private AuthType authType;
+    private String soapVersion;
     private String username;
     private String password;
     private String certificateName;
@@ -50,6 +51,14 @@ public abstract class ArchSoapClientProperties {
 
     public void setAuthType(AuthType authType) {
         this.authType = authType;
+    }
+
+    public String getSoapVersion() {
+        return soapVersion;
+    }
+
+    public void setSoapVersion(String soapVersion) {
+        this.soapVersion = soapVersion;
     }
 
     public String getUsername() {

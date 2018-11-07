@@ -10,6 +10,7 @@ import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 import org.springframework.ws.client.support.interceptor.ClientInterceptor;
 import org.springframework.ws.soap.SoapHeader;
 import org.springframework.ws.soap.SoapMessage;
+import org.springframework.ws.soap.SoapVersion;
 import org.springframework.ws.soap.axiom.AxiomSoapMessageFactory;
 import org.springframework.ws.soap.security.wss4j2.Wss4jSecurityInterceptor;
 import org.springframework.ws.transport.http.HttpComponentsMessageSender;
@@ -54,7 +55,11 @@ public abstract class ArchSoapClient extends WebServiceGatewaySupport {
         setDefaultUri(properties.getEndpoint());
 
         //Setting message factory
-//        setMessageFactory(new AxiomSoapMessageFactory());
+        SoapVersion soapVersion = ( properties.getSoapVersion() != null && properties.getSoapVersion().equals("1.2") )
+                ? SoapVersion.SOAP_12 : SoapVersion.SOAP_11;
+        AxiomSoapMessageFactory axiomSoapMessageFactory = new AxiomSoapMessageFactory();
+        axiomSoapMessageFactory.setSoapVersion(soapVersion);
+        setMessageFactory(axiomSoapMessageFactory);
 
         //Preparing the interceptors for logging and security
         List<ClientInterceptor> interceptorList = new ArrayList<>();

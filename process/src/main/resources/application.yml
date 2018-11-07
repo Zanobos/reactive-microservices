@@ -19,3 +19,4 @@ soap-service:
     endpoint: "http://www.freewebservicesx.com/freewebservices/CheckSDNBlockedPerson.asmx"
     contextPath: "it.zano.microservices.gen.person"
     authType: "none"
+    soapVersion: "1.2"

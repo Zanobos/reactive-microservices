@@ -20,6 +20,7 @@
         <spring-security-jwt.version>1.0.9.RELEASE</spring-security-jwt.version>
         <dozer.version>6.1.0</dozer.version>
         <commons-io.version>2.5</commons-io.version>
+        <apache-axiom.version>1.2.20</apache-axiom.version>
     </properties>
 
     <dependencyManagement>
@@ -83,6 +84,11 @@
         <dependency>
             <groupId>org.springframework.hateoas</groupId>
             <artifactId>spring-hateoas</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ws.commons.axiom</groupId>
+            <artifactId>axiom-impl</artifactId>
+            <version>${apache-axiom.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
