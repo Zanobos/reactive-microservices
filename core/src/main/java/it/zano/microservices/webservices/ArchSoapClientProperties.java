@@ -16,7 +16,7 @@ public abstract class ArchSoapClientProperties {
     private String certificatePassword;
     private Integer timeout;
     private Integer maxLoggingLength;
-    private Boolean mtomEnabled;
+    private boolean mtomEnabled;
     private boolean customSoapHeader;
     private boolean secureProcessingInSoapHeader;
 
@@ -100,11 +100,11 @@ public abstract class ArchSoapClientProperties {
         this.maxLoggingLength = maxLoggingLength;
     }
 
-    public Boolean getMtomEnabled() {
+    public boolean isMtomEnabled() {
         return mtomEnabled;
     }
 
-    public void setMtomEnabled(Boolean mtomEnabled) {
+    public void setMtomEnabled(boolean mtomEnabled) {
         this.mtomEnabled = mtomEnabled;
     }
 

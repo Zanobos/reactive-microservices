@@ -12,3 +12,10 @@ spring:
 
 server:
   port: 12000
+
+soap-service:
+  person-client:
+    name: "CheckPersonService"
+    endpoint: "http://www.freewebservicesx.com/freewebservices/CheckSDNBlockedPerson.asmx"
+    contextPath: "it.zano.microservices.gen.person"
+    authType: "none"

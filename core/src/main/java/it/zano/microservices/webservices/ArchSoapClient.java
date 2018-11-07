@@ -46,7 +46,7 @@ public abstract class ArchSoapClient extends WebServiceGatewaySupport {
         //Setting the marshaller
         Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
         marshaller.setContextPath(properties.getContextPath());
-        marshaller.setMtomEnabled(properties.getMtomEnabled());
+        marshaller.setMtomEnabled(properties.isMtomEnabled());
         setMarshaller(marshaller);
         setUnmarshaller(marshaller);
 
@@ -54,7 +54,7 @@ public abstract class ArchSoapClient extends WebServiceGatewaySupport {
         setDefaultUri(properties.getEndpoint());
 
         //Setting message factory
-        setMessageFactory(new AxiomSoapMessageFactory());
+//        setMessageFactory(new AxiomSoapMessageFactory());
 
         //Preparing the interceptors for logging and security
         List<ClientInterceptor> interceptorList = new ArrayList<>();

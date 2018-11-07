@@ -9,6 +9,6 @@ import org.springframework.context.annotation.Configuration;
  * @since 07/11/2018
  */
 @Configuration
-@ConfigurationProperties("person-client")
+@ConfigurationProperties(prefix = "soap-service.person-client")
 public class PersonClientProperties extends ArchSoapClientProperties {
 }
