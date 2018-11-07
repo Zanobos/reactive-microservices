@@ -47,7 +47,7 @@ public abstract class BaseSoaLogicExecutor<REQ extends BaseSoaRequestPayload,RES
      * @param innerRequest the request transformed by the mapper input
      * @return the innerResponse for the mapper output
      */
-    protected abstract IRES performBusinessLogic(IREQ innerRequest);
+    protected abstract IRES performBusinessLogic(IREQ innerRequest) throws MicroServiceException;
 
     /**
      * Override this method in case of custom mapping logic

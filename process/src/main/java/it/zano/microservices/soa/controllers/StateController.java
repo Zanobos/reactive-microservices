@@ -25,6 +25,12 @@ public class StateController extends BaseSoaController{
         return apply(stateInitExecutorBaseSoa, httpHeaders, request);
     }
 
+    @PostMapping(value = "/check")
+    public ResponseEntity<StateCheckResponse> check(@RequestHeader HttpHeaders httpHeaders,
+                                                  @RequestBody StateCheckRequest request) throws MicroServiceException {
+        return apply(stateCheckExecutorBaseSoa, httpHeaders, request);
+    }
+
     @PostMapping(value = "/end")
     public ResponseEntity<StateEndResponse> end(@RequestHeader HttpHeaders httpHeaders,
                                                 @RequestBody StateEndRequest request) throws MicroServiceException {
@@ -34,12 +40,15 @@ public class StateController extends BaseSoaController{
     @Autowired
     public StateController(
             StateInitExecutorBaseSoa stateInitExecutorBaseSoa,
-            StateEndExecutorBaseSoa stateEndExecutorBaseSoa) {
+            StateEndExecutorBaseSoa stateEndExecutorBaseSoa,
+            StateCheckExecutorBaseSoa stateCheckExecutorBaseSoa) {
         this.stateInitExecutorBaseSoa = stateInitExecutorBaseSoa;
         this.stateEndExecutorBaseSoa = stateEndExecutorBaseSoa;
+        this.stateCheckExecutorBaseSoa = stateCheckExecutorBaseSoa;
     }
 
     private StateInitExecutorBaseSoa stateInitExecutorBaseSoa;
     private StateEndExecutorBaseSoa stateEndExecutorBaseSoa;
+    private StateCheckExecutorBaseSoa stateCheckExecutorBaseSoa;
 
 }

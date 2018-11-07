@@ -111,12 +111,17 @@ public abstract class ArchSoapClient extends WebServiceGatewaySupport {
 
     }
 
+    protected <REQ, RES> RES call(REQ request) throws MicroServiceException {
+        return call(request, null);
+    }
+
     protected <REQ, RES, HEADER> RES call(REQ request, JAXBElement<HEADER> soapHeader) throws MicroServiceException {
         StopWatch stopWatchSoapInvocation = new StopWatch();
         stopWatchSoapInvocation.start();
         Object response;
         try {
             WebServiceMessageCallback requestCallback;
+            //Add soap header only if needed
             if(properties.isCustomSoapHeader()) {
                 requestCallback = createRequestCallback(soapHeader, properties);
             } else {
