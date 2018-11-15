@@ -7,6 +7,7 @@ import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.util.StopWatch;
 import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
@@ -19,6 +20,8 @@ import java.nio.charset.Charset;
 public class ArchRestLoggingInterceptor implements ClientHttpRequestInterceptor {
 
     private final Logger logger = LoggerFactory.getLogger(ArchRestLoggingInterceptor.class);
+    private static final String REST_PERFORMANCE = "{}, rest call to uri {} done in {} ms";
+
     private static final int DEFAULT_MAX_LENGTH = 300000;
 
     private String serviceName;
@@ -32,9 +35,13 @@ public class ArchRestLoggingInterceptor implements ClientHttpRequestInterceptor 
 
     @Override
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
+        StopWatch stopWatchSoapInvocation = new StopWatch();
+        stopWatchSoapInvocation.start();
         logRequest(request,body);
         ClientHttpResponse response = execution.execute(request, body);
+        stopWatchSoapInvocation.stop();
         logResponse(response);
+        logger.info(REST_PERFORMANCE, serviceName, request.getURI(), stopWatchSoapInvocation.getLastTaskTimeMillis());
         return response;
     }
 
