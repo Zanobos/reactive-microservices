@@ -1,4 +1,4 @@
-package it.zano.microservices.webservices;
+package it.zano.microservices.webservices.rest;
 
 import it.zano.microservices.util.LogMaskUtils;
 import org.slf4j.Logger;

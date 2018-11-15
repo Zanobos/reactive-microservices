@@ -1,4 +1,4 @@
-package it.zano.microservices.webservices;
+package it.zano.microservices.webservices.soap;
 
 import it.zano.microservices.exception.MicroServiceException;
 import org.slf4j.Logger;

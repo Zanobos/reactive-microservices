@@ -1,4 +1,4 @@
-package it.zano.microservices.webservices;
+package it.zano.microservices.webservices.soap;
 
 /**
  * @author a.zanotti

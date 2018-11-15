@@ -1,4 +1,4 @@
-package it.zano.microservices.webservices;
+package it.zano.microservices.webservices.rest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

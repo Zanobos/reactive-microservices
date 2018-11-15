@@ -4,7 +4,7 @@ import it.zano.microservices.exception.MicroServiceException;
 import it.zano.microservices.gen.person.CheckBlockedNames;
 import it.zano.microservices.gen.person.CheckBlockedNamesResponse;
 import it.zano.microservices.gen.person.ObjectFactory;
-import it.zano.microservices.webservices.ArchSoapClient;
+import it.zano.microservices.webservices.soap.ArchSoapClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
