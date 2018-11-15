@@ -18,14 +18,17 @@ import java.nio.charset.Charset;
  */
 public class ArchRestLoggingInterceptor implements ClientHttpRequestInterceptor {
 
+    private final Logger logger = LoggerFactory.getLogger(ArchRestLoggingInterceptor.class);
+    private static final int DEFAULT_MAX_LENGTH = 300000;
+
     private String serviceName;
-    private static final int MAX_LENGTH = 3000000;
+    private int maxLength;
 
-    public ArchRestLoggingInterceptor(String serviceName) {
+
+    ArchRestLoggingInterceptor(String serviceName, Integer maxLoggingLength) {
         this.serviceName = serviceName;
+        this.maxLength = maxLoggingLength != null ? maxLoggingLength : DEFAULT_MAX_LENGTH;
     }
-
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
@@ -38,11 +41,11 @@ public class ArchRestLoggingInterceptor implements ClientHttpRequestInterceptor 
     private void logRequest(HttpRequest request, byte[] body) {
 
         int bodyLength = body.length;
-        if(bodyLength <= MAX_LENGTH) {
-            logger.info("{}, Request to URI: {}, method: {}, headers: {}, request: {}", serviceName, request.getURI(), request.getMethod().name(),
+        if(bodyLength <= maxLength) {
+            logger.info("{}, uri: {}, method: {}, headers: {}, request: {}", serviceName, request.getURI(), request.getMethod().name(),
                     request.getHeaders(), LogMaskUtils.maskFields(new String(body, Charset.defaultCharset())));
         } else {
-            logger.info("{}, Request to URI: {}, method: {}, headers: {}, request: {}: {} bytes", serviceName, request.getURI(), request.getMethod().name(),
+            logger.info("{}, uri: {}, method: {}, headers: {}, request: {}: {} bytes", serviceName, request.getURI(), request.getMethod().name(),
                     request.getHeaders(), "[Request is too long to be logged]", bodyLength);
         }
     }

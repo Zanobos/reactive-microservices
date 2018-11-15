@@ -7,47 +7,32 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.annotation.PostConstruct;
 import java.net.URI;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 public abstract class ArchRestTemplate extends RestTemplate {
 
-	public ArchRestTemplate() {
+    protected static final Logger log = LoggerFactory.getLogger(ArchRestTemplate.class);
+
+    private ArchRestTemplateProperties properties;
+
+	public ArchRestTemplate(ArchRestTemplateProperties properties) {
 		super(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
+		this.properties = properties;
+        setInterceptors(Collections.singletonList(new ArchRestLoggingInterceptor(properties.getName(),
+                properties.getMaxLoggingLength())));
 	}
 
-	@PostConstruct
-	private void init () {
-		this.setInterceptors(Collections.singletonList(new ArchRestLoggingInterceptor(name)));
+
+	protected URI buildUri(Map<String,String> queryParam, Map<String,String> uriParam) {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(properties.getEndpoint());
+        if (queryParam != null)
+            queryParam.forEach(builder::queryParam);
+        if(uriParam == null)
+            uriParam = new HashMap<>();
+        return builder.buildAndExpand(uriParam).encode().toUri();
 	}
-
-	protected static final Logger log = LoggerFactory.getLogger(ArchRestTemplate.class);
-
-	protected String name;
-	protected String endpoint;
-
-	protected URI buildUri(Map<String,String> queryParam) {
-		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(endpoint);
-		queryParam.forEach(builder::queryParam);
-		return builder.build().encode().toUri();
-	}
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEndpoint() {
-        return endpoint;
-    }
-
-    public void setEndpoint(String endpoint) {
-        this.endpoint = endpoint;
-    }
 
 }
