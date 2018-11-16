@@ -1,4 +1,4 @@
-package it.zano.microservices.soa.executors;
+package it.zano.microservices.soa.executors.stateinit;
 
 import it.zano.microservices.controller.soa.BaseSoaLogicExecutor;
 import org.dozer.Mapper;
@@ -10,11 +10,11 @@ import org.springframework.stereotype.Service;
  * @since 16/10/2018
  */
 @Service
-public class StateInitExecutorBaseSoa extends BaseSoaLogicExecutor<StateInitRequest, StateInitResponse,
+public class StateInitExecutor extends BaseSoaLogicExecutor<StateInitRequest, StateInitResponse,
         StateInitRequest, StateInitResponse> {
 
     @Autowired
-    public StateInitExecutorBaseSoa(Mapper mapper) {
+    public StateInitExecutor(Mapper mapper) {
         super(mapper);
     }
 

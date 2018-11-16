@@ -1,4 +1,4 @@
-package it.zano.microservices.soa.executors;
+package it.zano.microservices.soa.executors.statecheck;
 
 import it.zano.microservices.controller.soa.BaseSoaLogicExecutor;
 import it.zano.microservices.exception.MicroServiceException;
@@ -12,13 +12,13 @@ import org.springframework.stereotype.Service;
  * @since 07/11/2018
  */
 @Service
-public class StateCheckExecutorBaseSoa extends BaseSoaLogicExecutor<StateCheckRequest, StateCheckResponse,
+public class StateCheckExecutor extends BaseSoaLogicExecutor<StateCheckRequest, StateCheckResponse,
         StateCheckRequest, StateCheckResponse> {
 
     private PersonClient personClient;
 
     @Autowired
-    public StateCheckExecutorBaseSoa(Mapper mapper, PersonClient personClient) {
+    public StateCheckExecutor(Mapper mapper, PersonClient personClient) {
         super(mapper);
         this.personClient = personClient;
     }

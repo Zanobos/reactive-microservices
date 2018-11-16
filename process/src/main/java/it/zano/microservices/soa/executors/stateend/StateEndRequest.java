@@ -1,4 +1,4 @@
-package it.zano.microservices.soa.executors;
+package it.zano.microservices.soa.executors.stateend;
 
 import it.zano.microservices.controller.soa.BaseSoaRequestPayload;
 

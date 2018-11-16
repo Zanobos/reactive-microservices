@@ -20,3 +20,9 @@ soap-service:
     contextPath: "it.zano.microservices.gen.person"
     authType: "none"
     soapVersion: "1.2"
+
+
+rest-template:
+  bitcoin-price:
+    name: "BitcoinService"
+    endpoint: "http://api.coindesk.com/v1/bpi/currentprice.json"

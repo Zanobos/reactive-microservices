@@ -1,4 +1,4 @@
-package it.zano.microservices.soa.executors;
+package it.zano.microservices.soa.executors.statecheck;
 
 import it.zano.microservices.controller.soa.BaseSoaResponsePayload;
 
