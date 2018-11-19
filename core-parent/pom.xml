@@ -8,7 +8,6 @@
     <artifactId>core-parent</artifactId>
     <version>0.1.0</version>
     <packaging>pom</packaging>
-    <description>Competence centre project parent</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -35,13 +34,15 @@
    </dependencies>
 
     <build>
+        <!-- Filter the resources specified. This plugin looks for @property.name@ properties in the resource files and
+         it change the values with the one specified with -->
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
             </resource>
         </resources>
-        <!-- Configuring plugin for children-->
+        <!-- Configuring plugin for children, so that folders and config is already done -->
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -59,6 +60,7 @@
             </plugins>
         </pluginManagement>
         <plugins>
+            <!-- Remove the version number from jar name -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -67,6 +69,7 @@
                     <finalName>${project.artifactId}</finalName>
                 </configuration>
             </plugin>
+            <!-- Repackage the jar to be executable and remove the version from jar name -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -83,6 +86,7 @@
                     <finalName>${project.artifactId}</finalName>
                 </configuration>
             </plugin>
+            <!-- Create swagger documentation at build time, so that the interface can be shared statically -->
             <plugin>
                 <groupId>com.github.kongchen</groupId>
                 <artifactId>swagger-maven-plugin</artifactId>

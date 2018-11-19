@@ -43,73 +43,88 @@
     </dependencyManagement>
 
     <dependencies>
+        <!-- Base dependency with usual spring annotation such as controller, mapping, etc -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+        <!-- Spring boot starter test needs to be default scope, otherwise children do not get it -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
         </dependency>
+        <!-- AOP module. Used for example for logging. No need for direct aspect-J dependency-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
+        <!-- boot + JPA module. Used for annotation such as entity and repository, it NEEDS a specific driver-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
-        <!-- change with target db driver -->
+        <!-- START change with target db driver -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
         <!-- END change with target db driver -->
+        <!-- Spring boot module for events and RabbitMQ-->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-bus-amqp</artifactId>
         </dependency>
+        <!-- Spring support module for webservice, used for SOAP integration -->
         <dependency>
             <groupId>org.springframework.ws</groupId>
             <artifactId>spring-ws-support</artifactId>
         </dependency>
+        <!-- Spring support module for security in webservices integration -->
         <dependency>
             <groupId>org.springframework.ws</groupId>
             <artifactId>spring-ws-security</artifactId>
         </dependency>
+        <!-- Spring support module for webservice, used for SOAP integration -->
         <dependency>
             <groupId>org.springframework.ws</groupId>
             <artifactId>spring-ws-core</artifactId>
         </dependency>
+        <!-- Spring module used for rest representation -->
         <dependency>
             <groupId>org.springframework.hateoas</groupId>
             <artifactId>spring-hateoas</artifactId>
         </dependency>
+        <!-- Axiom module, used in SOAP services, it provides a message factory implementation -->
         <dependency>
             <groupId>org.apache.ws.commons.axiom</groupId>
             <artifactId>axiom-impl</artifactId>
             <version>${apache-axiom.version}</version>
         </dependency>
+        <!-- Spring security module, not used yet -->
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-jwt</artifactId>
             <version>${spring-security-jwt.version}</version>
         </dependency>
+        <!-- Spring module to allow swagger annotations -->
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
             <version>${springfox-swagger.version}</version>
         </dependency>
+        <!-- Spring module to allow the UI of swagger -->
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
             <version>${springfox-swagger.version}</version>
         </dependency>
+        <!-- Library for a true mapper that perform a deep copy -->
         <dependency>
             <groupId>com.github.dozermapper</groupId>
             <artifactId>dozer-core</artifactId>
             <version>${dozer.version}</version>
         </dependency>
+        <!-- Module for general utility such as copy from streams and so on -->
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>

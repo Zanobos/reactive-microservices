@@ -31,23 +31,23 @@ public class ExampleUnitTest {
     @Test
     public void genericTestOnSpringObject() {
 
-        ExampleArchRestProperties properties = new ExampleArchRestProperties();
+        StubRestProperties properties = new StubRestProperties();
         properties.setEndpoint("ENDPOINT");
-        ExampleArchRestTemplate exampleArchRestTemplate = new ExampleArchRestTemplate(properties);
-        Assert.assertEquals("ENDPOINT",exampleArchRestTemplate.getEndpoint());
+        StubRestTemplate stubRestTemplate = new StubRestTemplate(properties);
+        Assert.assertEquals("ENDPOINT", stubRestTemplate.getEndpoint());
 
     }
 
-    private static class ExampleResource extends ArchRestResource {}
+    private static class StubRestResource extends ArchRestResource {}
 
     @Configuration
     @ConfigurationProperties(prefix = "rest-template.example-service")
-    private static class ExampleArchRestProperties extends ArchRestTemplateProperties {}
+    private static class StubRestProperties extends ArchRestTemplateProperties {}
 
     @Service
-    private static class ExampleArchRestTemplate extends ArchRestTemplate<ExampleResource> {
+    private static class StubRestTemplate extends ArchRestTemplate<StubRestResource> {
 
-        public ExampleArchRestTemplate(ArchRestTemplateProperties properties) {
+        public StubRestTemplate(ArchRestTemplateProperties properties) {
             super(properties);
         }
     }
