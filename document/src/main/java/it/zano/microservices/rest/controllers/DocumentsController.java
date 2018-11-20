@@ -9,6 +9,7 @@ import it.zano.microservices.model.entities.Document;
 import it.zano.microservices.model.repositories.DocumentRepository;
 import it.zano.microservices.rest.resources.DocumentResource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -82,6 +83,21 @@ public class DocumentsController extends BaseRestController<Document,DocumentRes
         return ResponseEntity.ok(resource);
     }
 
+    // Sleep 10 seconds to test observable pattern
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<DocumentResource> putDocument(@RequestHeader HttpHeaders httpHeaders,
+                                                        @PathVariable(value = "id") Integer id,
+                                                        @RequestBody DocumentResource documentResource) throws InterruptedException {
+        Document document = assembler.toModelClass(documentResource);
+        document.setId(id);
+        Document documentSaved = documentRepository.save(document);
+        Thread.sleep(sleepTime);
+        DocumentResource resource = assembler.toResource(documentSaved);
+        return ResponseEntity.ok(resource);
+    }
+
+    @Value("${documents.put.sleeptime}")
+    private int sleepTime;
 
     private final DocumentRepository documentRepository;
     private final DocumentsEventController rabbitController;

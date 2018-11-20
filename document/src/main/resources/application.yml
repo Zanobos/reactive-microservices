@@ -12,3 +12,7 @@ spring:
 
 server:
   port: 13000
+
+documents:
+  put:
+    sleeptime: 10000

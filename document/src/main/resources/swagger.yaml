@@ -87,6 +87,37 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/DocumentResource"
+    put:
+      tags:
+      - "documents"
+      operationId: "putDocument"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          type: "object"
+          additionalProperties:
+            type: "array"
+            items:
+              type: "string"
+      - name: "id"
+        in: "path"
+        required: true
+        type: "integer"
+        format: "int32"
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/DocumentResource"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/DocumentResource"
     delete:
       tags:
       - "documents"
