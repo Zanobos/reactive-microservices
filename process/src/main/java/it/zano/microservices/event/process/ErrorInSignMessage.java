@@ -1,4 +1,4 @@
-package it.zano.microservices.event;
+package it.zano.microservices.event.process;
 
 import it.zano.microservices.controller.event.ErrorMessage;
 

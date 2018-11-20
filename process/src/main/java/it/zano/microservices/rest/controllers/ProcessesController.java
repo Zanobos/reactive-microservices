@@ -1,11 +1,11 @@
 package it.zano.microservices.rest.controllers;
 
 import io.swagger.annotations.Api;
-import it.zano.microservices.controller.rest.BaseAssembler;
 import it.zano.microservices.controller.rest.BaseRestController;
 import it.zano.microservices.exception.MicroServiceException;
 import it.zano.microservices.model.entities.ProcessInfo;
 import it.zano.microservices.model.repositories.ProcessRepository;
+import it.zano.microservices.rest.assembler.ProcessAssembler;
 import it.zano.microservices.rest.resources.ProcessResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 public class ProcessesController extends BaseRestController<ProcessInfo,ProcessResource> {
 
     @Autowired
-    protected ProcessesController(BaseAssembler<ProcessInfo,ProcessResource> assembler, ProcessRepository processRepository) {
+    protected ProcessesController(ProcessAssembler assembler, ProcessRepository processRepository) {
         super(assembler);
         this.processRepository = processRepository;
     }

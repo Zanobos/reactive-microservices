@@ -1,14 +1,12 @@
-package it.zano.microservices.event;
+package it.zano.microservices.event.process;
 
-import java.io.Serializable;
+import it.zano.microservices.controller.event.RabbitMessage;
 
 /**
  * @author a.zanotti
  * @since 19/10/2018
  */
-public class SignDocMessage implements Serializable{
-
-    private static final long serialVersionUID = 42L;
+public class SignDocMessage  extends RabbitMessage {
 
     private String userId;
     private String documentId;

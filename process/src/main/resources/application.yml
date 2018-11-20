@@ -26,3 +26,6 @@ rest-template:
   bitcoin-price:
     name: "BitcoinService"
     endpoint: "http://api.coindesk.com/v1/bpi/currentprice.json"
+  document-service:
+    name: "DocumentsService"
+    endpoint: "http://localhost:13000/documents/"

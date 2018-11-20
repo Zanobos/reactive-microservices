@@ -1,6 +1,7 @@
-package it.zano.microservices.event;
+package it.zano.microservices.event.process;
 
 import it.zano.microservices.controller.event.RabbitController;
+import it.zano.microservices.event.EventConfiguration;
 import it.zano.microservices.model.entities.User;
 import it.zano.microservices.model.repositories.UserRepository;
 import org.slf4j.Logger;
@@ -26,7 +27,7 @@ public class ProcessEventController extends RabbitController {
         this.userRepository = userRepository;
     }
 
-    @RabbitListener(queues = ProcessEventConfiguration.DOCUMENT_QUEUE)
+    @RabbitListener(queues = EventConfiguration.DOCUMENT_QUEUE)
     public void handleRabbitMessage(@Payload SignDocMessage message) {
         logger.info("Received message! {}",message);
         User user = userRepository.findById(Integer.parseInt(message.getUserId())).orElse(null);

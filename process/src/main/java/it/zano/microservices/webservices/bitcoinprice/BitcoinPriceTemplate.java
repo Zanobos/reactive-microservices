@@ -1,7 +1,6 @@
 package it.zano.microservices.webservices.bitcoinprice;
 
 import it.zano.microservices.webservices.rest.ArchRestTemplate;
-import it.zano.microservices.webservices.rest.ArchRestTemplateProperties;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.AbstractJackson2HttpMessageConverter;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
@@ -14,7 +13,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class BitcoinPriceTemplate extends ArchRestTemplate<BitcoinPriceResource> {
 
-    public BitcoinPriceTemplate(ArchRestTemplateProperties properties) {
+    public BitcoinPriceTemplate(BitcoinPriceProperties properties) {
         super(properties, BitcoinPriceResource.class);
         getMessageConverters().add(new JavaScriptMessageConverter());
     }

@@ -15,7 +15,7 @@ import java.util.List;
  * @since 19/10/2018
  */
 @Configuration
-public class ProcessEventConfiguration extends RabbitConfiguration {
+public class EventConfiguration extends RabbitConfiguration {
 
     public final static String DOCUMENT_EXCHANGE = "documents";
     public final static String DOCUMENT_QUEUE = "documents";
@@ -23,9 +23,18 @@ public class ProcessEventConfiguration extends RabbitConfiguration {
     protected final FanoutExchange documentExchange;
     protected final Queue documentQueue;
 
-    public ProcessEventConfiguration() {
+    public final static String OPROC_EXCHANGE = "oproc";
+    public final static String OPROC_QUEUE = "oproc";
+
+    protected final FanoutExchange oprocExchange;
+    protected final Queue oprocQueue;
+
+
+    public EventConfiguration() {
         documentExchange = new FanoutExchange(DOCUMENT_EXCHANGE);
         documentQueue = new Queue(DOCUMENT_QUEUE);
+        oprocExchange = new FanoutExchange(OPROC_EXCHANGE);
+        oprocQueue = new Queue(OPROC_QUEUE);
     }
 
     @Bean
@@ -33,6 +42,7 @@ public class ProcessEventConfiguration extends RabbitConfiguration {
     public List<FanoutExchange> fanoutExchanges() {
         List<FanoutExchange> fanoutExchanges = super.fanoutExchanges();
         fanoutExchanges.add(documentExchange);
+        fanoutExchanges.add(oprocExchange);
         return fanoutExchanges;
     }
 
@@ -41,6 +51,7 @@ public class ProcessEventConfiguration extends RabbitConfiguration {
     public List<Queue> queues() {
         List<Queue> queues = super.queues();
         queues.add(documentQueue);
+        queues.add(oprocQueue);
         return queues;
     }
 
@@ -49,6 +60,7 @@ public class ProcessEventConfiguration extends RabbitConfiguration {
     public List<Binding> bindings() {
         List<Binding> bindings = super.bindings();
         bindings.add(BindingBuilder.bind(documentQueue).to(documentExchange));
+        bindings.add(BindingBuilder.bind(oprocQueue).to(oprocExchange));
         return bindings;
     }
 }

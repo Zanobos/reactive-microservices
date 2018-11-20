@@ -6,6 +6,7 @@ info:
   title: "document"
 tags:
 - name: "documents"
+- name: "oproc"
 - name: "processes"
 - name: "state"
 - name: "users"
@@ -179,6 +180,55 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/DocumentResource"
+  /oproc:
+    post:
+      tags:
+      - "oproc"
+      operationId: "createObservableProcess"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          type: "object"
+          additionalProperties:
+            type: "array"
+            items:
+              type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/ObservableProcessResource"
+  /oproc/{id}:
+    get:
+      tags:
+      - "oproc"
+      operationId: "getObservableProcess"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          type: "object"
+          additionalProperties:
+            type: "array"
+            items:
+              type: "string"
+      - name: "id"
+        in: "path"
+        required: true
+        type: "integer"
+        format: "int32"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/ObservableProcessResource"
   /processes/{id}:
     get:
       tags:
@@ -417,6 +467,25 @@ definitions:
         type: "string"
         xml:
           attribute: true
+  ObservableProcessResource:
+    type: "object"
+    properties:
+      state:
+        type: "string"
+        enum:
+        - "PUT_DOCUMENT_IN_PROGRESS"
+        - "WAITED_IN_PROGRESS"
+        - "END"
+      links:
+        type: "array"
+        xml:
+          name: "link"
+          namespace: "http://www.w3.org/2005/Atom"
+        readOnly: true
+        items:
+          xml:
+            name: "link"
+          $ref: "#/definitions/Link"
   ProcessResource:
     type: "object"
     properties:

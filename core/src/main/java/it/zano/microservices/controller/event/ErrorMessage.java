@@ -1,16 +1,10 @@
 package it.zano.microservices.controller.event;
 
-import it.zano.microservices.util.JsonUtils;
-
-import java.io.Serializable;
-
 /**
  * @author a.zanotti
  * @since 19/10/2018
  */
-public class ErrorMessage implements Serializable {
-
-    private static final long serialVersionUID = 42L;
+public class ErrorMessage extends RabbitMessage {
 
     private String serviceId;
     private String errorId;
@@ -21,11 +15,6 @@ public class ErrorMessage implements Serializable {
     public ErrorMessage(String serviceId, String errorId) {
         this.serviceId = serviceId;
         this.errorId = errorId;
-    }
-
-    @Override
-    public String toString() {
-        return JsonUtils.toJson(this);
     }
 
     public String getServiceId() {
