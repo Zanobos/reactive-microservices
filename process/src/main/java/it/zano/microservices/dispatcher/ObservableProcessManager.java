@@ -23,10 +23,10 @@ public class ObservableProcessManager {
 
     private final static Logger logger = LoggerFactory.getLogger(ObservableProcessManager.class);
 
-    private DocumentTemplate documentTemplate;
-    private ObservableProcessStorage observableProcessStorage;
-    private ExecutorService executorService;
-    private ObservableProcessEventPublisher eventPublisher;
+    private final DocumentTemplate documentTemplate;
+    private final ObservableProcessStorage observableProcessStorage;
+    private final ExecutorService executorService;
+    private final ObservableProcessEventPublisher eventPublisher;
 
     @Autowired
     public ObservableProcessManager(DocumentTemplate documentTemplate,
@@ -76,6 +76,7 @@ public class ObservableProcessManager {
 
     public ObservableProcess getProcessStatus(int processid) {
         //Here return directly or wait for:
+        //Concept of last observed status
         //1. a change of status
         //2. a timeout
         ObservableProcess observableProcess = observableProcessStorage.retrieveProcess(processid);

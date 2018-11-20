@@ -9,7 +9,16 @@ import it.zano.microservices.model.beans.ObservableProcessStateEnum;
  */
 public class ObservableProcessResource extends BaseResource {
 
+    private Integer processId;
     private ObservableProcessStateEnum state;
+
+    public Integer getProcessId() {
+        return processId;
+    }
+
+    public void setProcessId(Integer processId) {
+        this.processId = processId;
+    }
 
     public ObservableProcessStateEnum getState() {
         return state;

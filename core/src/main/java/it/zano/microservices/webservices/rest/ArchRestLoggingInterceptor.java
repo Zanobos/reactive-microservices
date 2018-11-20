@@ -19,9 +19,9 @@ import java.nio.charset.Charset;
  */
 public class ArchRestLoggingInterceptor implements ClientHttpRequestInterceptor {
 
-    private final Logger logger = LoggerFactory.getLogger(ArchRestLoggingInterceptor.class);
-    private static final String REST_PERFORMANCE = "{}, rest call to uri {} done in {} ms";
+    private static final Logger logger = LoggerFactory.getLogger(ArchRestLoggingInterceptor.class);
 
+    private static final String REST_PERFORMANCE = "{}, rest call to uri {} done in {} ms";
     private static final int DEFAULT_MAX_LENGTH = 300000;
 
     private String serviceName;

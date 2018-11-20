@@ -32,6 +32,7 @@ public class ObservableProcessAssembler extends BaseAssembler<ObservableProcess,
     public ObservableProcessResource toResource(ObservableProcess observableProcess) {
         ObservableProcessResource observableProcessResource = createResourceWithId(observableProcess.getId(),observableProcess);
         mapper.map(observableProcess,observableProcessResource);
+        observableProcessResource.setProcessId(observableProcess.getId());
         return observableProcessResource;
     }
 }

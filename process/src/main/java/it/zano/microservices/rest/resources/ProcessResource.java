@@ -8,8 +8,17 @@ import it.zano.microservices.controller.rest.BaseResource;
  */
 public class ProcessResource extends BaseResource {
 
+    private Integer processId;
     private String processCode;
     private String processState;
+
+    public Integer getProcessId() {
+        return processId;
+    }
+
+    public void setProcessId(Integer processId) {
+        this.processId = processId;
+    }
 
     public String getProcessCode() {
         return processCode;

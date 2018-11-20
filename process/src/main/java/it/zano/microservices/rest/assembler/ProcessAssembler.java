@@ -24,6 +24,7 @@ public class ProcessAssembler extends BaseAssembler<ProcessInfo,ProcessResource>
     public ProcessResource toResource(ProcessInfo process) {
         ProcessResource processResource = createResourceWithId(process.getId(),process);
         mapper.map(process,processResource);
+        processResource.setProcessId(process.getId());
         return processResource;
     }
 

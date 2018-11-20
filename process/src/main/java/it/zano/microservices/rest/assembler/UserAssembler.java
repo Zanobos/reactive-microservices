@@ -1,8 +1,8 @@
 package it.zano.microservices.rest.assembler;
 
-import it.zano.microservices.rest.controllers.UserController;
 import it.zano.microservices.controller.rest.BaseAssembler;
 import it.zano.microservices.model.entities.User;
+import it.zano.microservices.rest.controllers.UserController;
 import it.zano.microservices.rest.resources.UserResource;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +24,7 @@ public class UserAssembler extends BaseAssembler<User, UserResource> {
     public UserResource toResource(User user) {
         UserResource userResource = createResourceWithId(user.getId(),user);
         mapper.map(user,userResource);
+        userResource.setUserId(user.getId());
         return userResource;
     }
 
