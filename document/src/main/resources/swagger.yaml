@@ -470,6 +470,9 @@ definitions:
   ObservableProcessResource:
     type: "object"
     properties:
+      processId:
+        type: "integer"
+        format: "int32"
       state:
         type: "string"
         enum:
@@ -489,6 +492,9 @@ definitions:
   ProcessResource:
     type: "object"
     properties:
+      processId:
+        type: "integer"
+        format: "int32"
       processCode:
         type: "string"
       processState:
@@ -544,6 +550,9 @@ definitions:
   UserResource:
     type: "object"
     properties:
+      userId:
+        type: "integer"
+        format: "int32"
       firstName:
         type: "string"
       lastName:

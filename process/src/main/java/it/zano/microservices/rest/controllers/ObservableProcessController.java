@@ -32,7 +32,8 @@ public class ObservableProcessController extends BaseRestController<ObservablePr
 
     @PostMapping
     public ResponseEntity<ObservableProcessResource> createObservableProcess(@RequestHeader HttpHeaders httpHeaders) {
-        ObservableProcess observableProcess = processManager.executeEvent(ObservableProcessManager.EventTypeEnum.CREATE, null);
+        Integer processId = 1024;
+        ObservableProcess observableProcess = processManager.executeEvent(ObservableProcessManager.EventTypeEnum.CREATE, processId);
         ObservableProcessResource observableProcessResource = assembler.toResource(observableProcess);
         return ResponseEntity.ok(observableProcessResource);
     }

@@ -8,6 +8,7 @@ public class ObservableProcess {
 
     private Integer id;
     private ObservableProcessStateEnum state;
+    private ObservableProcessStateEnum lastObservedState;
 
     public Integer getId() {
         return id;
@@ -23,5 +24,17 @@ public class ObservableProcess {
 
     public void setState(ObservableProcessStateEnum state) {
         this.state = state;
+    }
+
+    public ObservableProcessStateEnum getLastObservedState() {
+        return lastObservedState;
+    }
+
+    public void setLastObservedState(ObservableProcessStateEnum lastObservedState) {
+        this.lastObservedState = lastObservedState;
+    }
+
+    public void observe() {
+        this.lastObservedState = state;
     }
 }

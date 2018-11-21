@@ -5,8 +5,6 @@ import it.zano.microservices.event.observableprocess.EventTaskMessage;
 import it.zano.microservices.event.observableprocess.ObservableProcessEventPublisher;
 import it.zano.microservices.webservices.documents.DocumentResource;
 import it.zano.microservices.webservices.documents.DocumentTemplate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,9 +13,7 @@ import java.util.Map;
  * @author a.zanotti
  * @since 20/11/2018
  */
-public class CreateEventTask implements Runnable {
-
-    private static Logger logger = LoggerFactory.getLogger(CreateEventTask.class);
+public class CreateEventTask extends BaseTask {
 
     private static final String URI_ID = "id";
 
@@ -32,8 +28,7 @@ public class CreateEventTask implements Runnable {
     }
 
     @Override
-    public void run() {
-
+    protected void doRun() {
         Map<String, String> uriVariables = new HashMap<>();
         uriVariables.put(URI_ID, "" + id);
         DocumentResource document = new DocumentResource();
@@ -44,6 +39,5 @@ public class CreateEventTask implements Runnable {
         message.setProcessId(id);
         message.setEventTypeEnum(ObservableProcessManager.EventTypeEnum.PUT_DOCUMENT_COMPLETED);
         eventPublisher.sendMessage(message);
-        logger.info("Completed run");
     }
 }

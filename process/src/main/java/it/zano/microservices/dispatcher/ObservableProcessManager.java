@@ -11,8 +11,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author a.zanotti
@@ -24,67 +29,141 @@ public class ObservableProcessManager {
     private final static Logger logger = LoggerFactory.getLogger(ObservableProcessManager.class);
 
     private final DocumentTemplate documentTemplate;
-    private final ObservableProcessStorage observableProcessStorage;
+    private final ObservableProcessStorage observableProcessStorage; //This must be shared between all the applications
     private final ExecutorService executorService;
     private final ObservableProcessEventPublisher eventPublisher;
+    private final ConcurrentMap<Integer,ConcurrencyHelper> concurrencyHelperMap;
 
     @Autowired
-    public ObservableProcessManager(DocumentTemplate documentTemplate,
-                                    ObservableProcessStorage observableProcessStorage,
-                                    ObservableProcessEventPublisher eventPublisher) {
-        this.documentTemplate = documentTemplate;
+    public ObservableProcessManager(ObservableProcessStorage observableProcessStorage,
+                                    ObservableProcessEventPublisher eventPublisher,
+                                    DocumentTemplate documentTemplate) {
         this.observableProcessStorage = observableProcessStorage;
         this.eventPublisher = eventPublisher;
+        this.documentTemplate = documentTemplate;
         this.executorService = Executors.newWorkStealingPool();
+        this.concurrencyHelperMap = new ConcurrentHashMap<>();
     }
 
     public ObservableProcess executeEvent(EventTypeEnum event, Integer processId) {
 
+        //Add a new condition variable for this process
+        ConcurrencyHelper concurrencyHelper = new ConcurrencyHelper(new ReentrantLock());
+        ConcurrencyHelper oldValue = concurrencyHelperMap.putIfAbsent(processId, concurrencyHelper);
+        if(oldValue != null)
+            concurrencyHelper = oldValue;
+
+        concurrencyHelper.getLock().lock();
         ObservableProcess observableProcess;
-        logger.info("Start dealing with {} event", event);
-        switch (event) {
-            case CREATE:
-                processId = 1024;
-                observableProcess = new ObservableProcess();
-                observableProcess.setId(processId);
-                observableProcess.setState(ObservableProcessStateEnum.PUT_DOCUMENT_IN_PROGRESS);
-                //Async call -> this call an external service
-                executorService.execute(new CreateEventTask(documentTemplate, processId, eventPublisher));
-                observableProcessStorage.saveProcess(observableProcess);
-                break;
-            case PUT_DOCUMENT_COMPLETED:
-                observableProcess = observableProcessStorage.retrieveProcess(processId);
-                observableProcess.setState(ObservableProcessStateEnum.WAITED_IN_PROGRESS);
-                //Async call -> this just perform local stuff
-                executorService.execute(new PutDocumentCompletedEventTask(processId, eventPublisher));
-                observableProcessStorage.saveProcess(observableProcess);
-                break;
-            case WAITED_COMPLETED:
-                observableProcess = observableProcessStorage.retrieveProcess(processId);
-                observableProcess.setState(ObservableProcessStateEnum.END);
-                //No call to service, just end the process
-                observableProcessStorage.saveProcess(observableProcess);
-                break;
-            default:
-                //it should never happen
-                observableProcess = null;
+        try {
+            //TODO controlla condizione di GO/ABORT
+            logger.info("Start dealing with {} event", event);
+            switch (event) {
+                case CREATE:
+                    observableProcess = new ObservableProcess();
+                    observableProcess.setId(processId);
+                    observableProcess.setState(ObservableProcessStateEnum.PUT_DOCUMENT_IN_PROGRESS);
+                    observableProcess.setLastObservedState(ObservableProcessStateEnum.NOT_OBSERVED);
+                    //Async call -> this call an external service
+                    executorService.execute(new CreateEventTask(documentTemplate, processId, eventPublisher));
+                    observableProcessStorage.saveProcess(observableProcess);
+                    break;
+                case PUT_DOCUMENT_COMPLETED:
+                    observableProcess = observableProcessStorage.retrieveProcess(processId);
+                    observableProcess.setState(ObservableProcessStateEnum.WAITED_IN_PROGRESS);
+                    //Async call -> this just perform local stuff
+                    executorService.execute(new PutDocumentCompletedEventTask(processId, eventPublisher));
+                    observableProcessStorage.saveProcess(observableProcess);
+                    break;
+                case WAITED_COMPLETED:
+                    observableProcess = observableProcessStorage.retrieveProcess(processId);
+                    observableProcess.setState(ObservableProcessStateEnum.END);
+                    //No call to service, just end the process
+                    observableProcessStorage.saveProcess(observableProcess);
+                    //Remove the condition variable
+                    concurrencyHelperMap.remove(processId);
+                    break;
+                default:
+                    //it should never happen
+                    observableProcess = null;
+            }
+            concurrencyHelper.getCondition().signalAll();
+        } finally {
+            concurrencyHelper.getLock().unlock();
         }
         logger.info("Finished dealing with {} event", event);
 
         return observableProcess;
     }
 
-    public ObservableProcess getProcessStatus(int processid) {
-        //Here return directly or wait for:
-        //Concept of last observed status
-        //1. a change of status
-        //2. a timeout
-        ObservableProcess observableProcess = observableProcessStorage.retrieveProcess(processid);
+    public ObservableProcess getProcessStatus(int processId) {
+        //If the process has been completed, return;
+        ObservableProcess observableProcess = observableProcessStorage.retrieveProcess(processId);
+        if(observableProcess.getState() == ObservableProcessStateEnum.END) {
+            observableProcess.observe();
+            observableProcessStorage.saveProcess(observableProcess);
+            return observableProcess;
+        }
+
+
+        //This is a concurrent map.
+        ConcurrencyHelper concurrencyHelper = new ConcurrencyHelper(new ReentrantLock());
+        ConcurrencyHelper oldValue = concurrencyHelperMap.putIfAbsent(processId, concurrencyHelper);
+        if(oldValue != null)
+            concurrencyHelper = oldValue;
+
+        concurrencyHelper.getLock().lock();
+        try {
+            //Assign to variable and check condition
+            while ((observableProcess = observableProcessStorage.retrieveProcess(processId))
+                    .getLastObservedState().equals(observableProcess.getState())) {
+                //Await on condition
+                concurrencyHelper.getCondition().await();
+            }
+            observableProcess.observe();
+            observableProcessStorage.saveProcess(observableProcess);
+        } catch (InterruptedException e) {
+            //TODO timeout
+            logger.warn(e.getMessage());
+        } finally {
+            concurrencyHelper.getLock().unlock();
+        }
+
         return observableProcess;
+
     }
 
     public enum EventTypeEnum {
         CREATE, PUT_DOCUMENT_COMPLETED, WAITED_COMPLETED
+    }
+
+    public static class ConcurrencyHelper {
+
+        private Lock lock;
+        private Condition condition;
+
+        public ConcurrencyHelper() {}
+
+        public ConcurrencyHelper(Lock lock) {
+            this.lock = lock;
+            this.condition = lock.newCondition();
+        }
+
+        public Lock getLock() {
+            return lock;
+        }
+
+        public void setLock(Lock lock) {
+            this.lock = lock;
+        }
+
+        public Condition getCondition() {
+            return condition;
+        }
+
+        public void setCondition(Condition condition) {
+            this.condition = condition;
+        }
     }
 
 

@@ -5,5 +5,5 @@ package it.zano.microservices.model.beans;
  * @since 20/11/2018
  */
 public enum ObservableProcessStateEnum {
-    PUT_DOCUMENT_IN_PROGRESS, WAITED_IN_PROGRESS, END
+    NOT_OBSERVED, PUT_DOCUMENT_IN_PROGRESS, WAITED_IN_PROGRESS, END
 }
