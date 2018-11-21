@@ -97,26 +97,24 @@ public class ObservableProcessManager {
     }
 
     public ObservableProcess getProcessStatus(int processId) {
-        //If the process has been completed, return;
-        ObservableProcess observableProcess = observableProcessStorage.retrieveProcess(processId);
-        if(observableProcess.getState() == ObservableProcessStateEnum.END) {
-            observableProcess.observe();
-            observableProcessStorage.saveProcess(observableProcess);
-            return observableProcess;
-        }
-
 
         //This is a concurrent map.
         ConcurrencyHelper concurrencyHelper = new ConcurrencyHelper(new ReentrantLock());
         ConcurrencyHelper oldValue = concurrencyHelperMap.putIfAbsent(processId, concurrencyHelper);
-        if(oldValue != null)
+        if(oldValue != null) {
             concurrencyHelper = oldValue;
+        }
 
         concurrencyHelper.getLock().lock();
+
+        //If the process has been completed, return;
+        ObservableProcess observableProcess = observableProcessStorage.retrieveProcess(processId);
+
+        //this variable is method and so thread local
+        ObservableProcessStateEnum lastObservedState = observableProcess.getLastObservedState();
         try {
-            //Assign to variable and check condition
-            while ((observableProcess = observableProcessStorage.retrieveProcess(processId))
-                    .getLastObservedState().equals(observableProcess.getState())) {
+            //Check condition
+            while (lastObservedState.equals(observableProcessStorage.retrieveProcess(processId).getState())) {
                 //Await on condition
                 concurrencyHelper.getCondition().await();
             }
