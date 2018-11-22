@@ -12,10 +12,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.*;
-import java.util.concurrent.locks.Condition;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author a.zanotti
@@ -30,7 +30,6 @@ public class ObservableProcessManager {
     private final ObservableProcessStorage observableProcessStorage; //This must be shared between all the applications
     private final ExecutorService executorService;
     private final ObservableProcessEventPublisher eventPublisher;
-    private final ConcurrentMap<Integer,ConcurrencyHelper> concurrencyHelperMap;
     private final ObservableProcessManagerProperties properties;
 
     @Autowired
@@ -43,19 +42,12 @@ public class ObservableProcessManager {
         this.documentTemplate = documentTemplate;
         this.properties = properties;
         this.executorService = Executors.newWorkStealingPool();
-        this.concurrencyHelperMap = new ConcurrentHashMap<>();
     }
 
     public ObservableProcess executeEvent(ObservableProcessTransitionEnum event, Integer processId) {
 
-        //Add a new condition variable for this process
-        ConcurrencyHelper concurrencyHelper = new ConcurrencyHelper(new ReentrantLock());
-        ConcurrencyHelper oldValue = concurrencyHelperMap.putIfAbsent(processId, concurrencyHelper);
-        if(oldValue != null)
-            concurrencyHelper = oldValue;
-
-        //TODO this lock must be shared between threads (and applications...)
-        concurrencyHelper.getLock().lock();
+        Lock lock = observableProcessStorage.getLock(processId);
+        lock.lock();
         //Starting point
         ObservableProcess observableProcess = observableProcessStorage.retrieveProcess(processId);
         //In any case I create one process
@@ -92,13 +84,13 @@ public class ObservableProcessManager {
                         observableProcess = null;
                 }
                 observableProcessStorage.saveProcess(observableProcess);
-                concurrencyHelper.getChangedStatusCondition().signalAll();
+                observableProcessStorage.getChangedStatusCondition(processId).signalAll();
             } else {
                 logger.warn("Event {} discarded because actual state is {} while expected state is {}",
                         event, observableProcess.getState(), startingState);
             }
         } finally {
-            concurrencyHelper.getLock().unlock();
+            lock.unlock();
         }
         logger.info("Finished dealing with {} event", event);
 
@@ -107,15 +99,8 @@ public class ObservableProcessManager {
 
     public ObservableProcess getProcessStatus(int processId) {
 
-        //This is a concurrent map.
-        ConcurrencyHelper concurrencyHelper = new ConcurrencyHelper(new ReentrantLock());
-        ConcurrencyHelper oldValue = concurrencyHelperMap.putIfAbsent(processId, concurrencyHelper);
-        if(oldValue != null) {
-            concurrencyHelper = oldValue;
-        }
-
-        concurrencyHelper.getLock().lock();
-
+        Lock lock = observableProcessStorage.getLock(processId);
+        lock.lock();
         //If the process has been completed, return;
         ObservableProcess observableProcess = observableProcessStorage.retrieveProcess(processId);
 
@@ -126,7 +111,7 @@ public class ObservableProcessManager {
             while ((observableProcess = observableProcessStorage.retrieveProcess(processId)).getState().equals(lastObservedState)) {
                 Integer timeout = properties.getStates().get(observableProcess.getState()).getTimeout();
                 //Await on condition
-                boolean await = concurrencyHelper.getChangedStatusCondition().await(timeout, TimeUnit.SECONDS);
+                boolean await = observableProcessStorage.getChangedStatusCondition(processId).await(timeout, TimeUnit.SECONDS);
                 if(!await) {
                     logger.info("Request timeout!");
                     break;
@@ -137,39 +122,10 @@ public class ObservableProcessManager {
         } catch (InterruptedException e) {
             logger.warn(e.getMessage());
         } finally {
-            concurrencyHelper.getLock().unlock();
+            lock.unlock();
         }
-
         return observableProcess;
 
     }
-
-    public static class ConcurrencyHelper {
-
-        private Lock lock;
-        private Condition changedStatusCondition;
-        private Condition workDoneCondition;
-
-        public ConcurrencyHelper() {}
-
-        public ConcurrencyHelper(Lock lock) {
-            this.lock = lock;
-            this.changedStatusCondition = lock.newCondition();
-            this.workDoneCondition = lock.newCondition();
-        }
-
-        public Lock getLock() {
-            return lock;
-        }
-
-        public Condition getChangedStatusCondition() {
-            return changedStatusCondition;
-        }
-
-        public Condition getWorkDoneCondition() {
-            return workDoneCondition;
-        }
-    }
-
 
 }
