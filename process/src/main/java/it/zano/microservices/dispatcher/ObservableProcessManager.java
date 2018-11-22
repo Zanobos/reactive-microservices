@@ -80,8 +80,6 @@ public class ObservableProcessManager {
                     observableProcess.setState(ObservableProcessStateEnum.END);
                     //No call to service, just end the process
                     observableProcessStorage.saveProcess(observableProcess);
-                    //Remove the condition variable
-                    concurrencyHelperMap.remove(processId);
                     break;
                 default:
                     //it should never happen
