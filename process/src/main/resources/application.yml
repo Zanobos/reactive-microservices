@@ -31,8 +31,22 @@ rest-template:
     endpoint: "http://localhost:13000/documents/"
 
 observable-process-manager:
-  timeouts:
-    NOT_OBSERVED: 0
-    PUT_DOCUMENT_IN_PROGRESS: 5
-    WAITED_IN_PROGRESS: 5
-    END: 0
+  states:
+    NOT_OBSERVED:
+      timeout: 0
+    PUT_DOCUMENT_IN_PROGRESS:
+      timeout: 5
+    WAITED_IN_PROGRESS:
+      timeout: 5
+    END:
+      timeout: 0
+  transitions:
+    CREATE:
+      from: "NOT_OBSERVED"
+      to: "PUT_DOCUMENT_IN_PROGRESS"
+    PUT_DOCUMENT_COMPLETED:
+      from: "PUT_DOCUMENT_IN_PROGRESS"
+      to: "WAITED_IN_PROGRESS"
+    WAITED_COMPLETED:
+      from: "WAITED_IN_PROGRESS"
+      to: "END"

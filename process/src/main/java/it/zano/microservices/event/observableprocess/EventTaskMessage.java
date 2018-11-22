@@ -1,7 +1,7 @@
 package it.zano.microservices.event.observableprocess;
 
 import it.zano.microservices.controller.event.RabbitMessage;
-import it.zano.microservices.dispatcher.ObservableProcessManager;
+import it.zano.microservices.model.beans.ObservableProcessTransitionEnum;
 
 /**
  * @author a.zanotti
@@ -10,7 +10,7 @@ import it.zano.microservices.dispatcher.ObservableProcessManager;
 public class EventTaskMessage extends RabbitMessage {
 
     private Integer processId;
-    private ObservableProcessManager.EventTypeEnum eventTypeEnum;
+    private ObservableProcessTransitionEnum transition;
 
     public Integer getProcessId() {
         return processId;
@@ -20,11 +20,11 @@ public class EventTaskMessage extends RabbitMessage {
         this.processId = processId;
     }
 
-    public ObservableProcessManager.EventTypeEnum getEventTypeEnum() {
-        return eventTypeEnum;
+    public ObservableProcessTransitionEnum getTransition() {
+        return transition;
     }
 
-    public void setEventTypeEnum(ObservableProcessManager.EventTypeEnum eventTypeEnum) {
-        this.eventTypeEnum = eventTypeEnum;
+    public void setTransition(ObservableProcessTransitionEnum transition) {
+        this.transition = transition;
     }
 }

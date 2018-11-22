@@ -1,8 +1,9 @@
 package it.zano.microservices.dispatcher.tasks;
 
-import it.zano.microservices.dispatcher.ObservableProcessManager;
 import it.zano.microservices.event.observableprocess.EventTaskMessage;
 import it.zano.microservices.event.observableprocess.ObservableProcessEventPublisher;
+
+import static it.zano.microservices.model.beans.ObservableProcessTransitionEnum.WAITED_COMPLETED;
 
 /**
  * @author a.zanotti
@@ -24,7 +25,7 @@ public class PutDocumentCompletedEventTask extends BaseTask{
             Thread.sleep(12000);
             EventTaskMessage message = new EventTaskMessage();
             message.setProcessId(id);
-            message.setEventTypeEnum(ObservableProcessManager.EventTypeEnum.WAITED_COMPLETED);
+            message.setTransition(WAITED_COMPLETED);
             eventPublisher.sendMessage(message);
         } catch (InterruptedException e) {
             logger.error("Error");

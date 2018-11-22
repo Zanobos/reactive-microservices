@@ -13,6 +13,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static it.zano.microservices.model.beans.ObservableProcessTransitionEnum.CREATE;
+
 /**
  * @author a.zanotti
  * @since 20/11/2018
@@ -33,7 +35,7 @@ public class ObservableProcessController extends BaseRestController<ObservablePr
     @PostMapping
     public ResponseEntity<ObservableProcessResource> createObservableProcess(@RequestHeader HttpHeaders httpHeaders) {
         Integer processId = 1024;
-        ObservableProcess observableProcess = processManager.executeEvent(ObservableProcessManager.EventTypeEnum.CREATE, processId);
+        ObservableProcess observableProcess = processManager.executeEvent(CREATE, processId);
         ObservableProcessResource observableProcessResource = assembler.toResource(observableProcess);
         return ResponseEntity.ok(observableProcessResource);
     }

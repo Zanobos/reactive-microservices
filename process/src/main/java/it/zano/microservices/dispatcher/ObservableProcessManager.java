@@ -5,6 +5,7 @@ import it.zano.microservices.dispatcher.tasks.PutDocumentCompletedEventTask;
 import it.zano.microservices.event.observableprocess.ObservableProcessEventPublisher;
 import it.zano.microservices.model.beans.ObservableProcess;
 import it.zano.microservices.model.beans.ObservableProcessStateEnum;
+import it.zano.microservices.model.beans.ObservableProcessTransitionEnum;
 import it.zano.microservices.webservices.documents.DocumentTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +46,7 @@ public class ObservableProcessManager {
         this.concurrencyHelperMap = new ConcurrentHashMap<>();
     }
 
-    public ObservableProcess executeEvent(EventTypeEnum event, Integer processId) {
+    public ObservableProcess executeEvent(ObservableProcessTransitionEnum event, Integer processId) {
 
         //Add a new condition variable for this process
         ConcurrencyHelper concurrencyHelper = new ConcurrencyHelper(new ReentrantLock());
@@ -53,39 +54,49 @@ public class ObservableProcessManager {
         if(oldValue != null)
             concurrencyHelper = oldValue;
 
+        //TODO this lock must be shared between threads (and applications...)
         concurrencyHelper.getLock().lock();
-        ObservableProcess observableProcess;
+        //Starting point
+        ObservableProcess observableProcess = observableProcessStorage.retrieveProcess(processId);
+        //In any case I create one process
+        if(observableProcess == null) {
+            observableProcess = new ObservableProcess();
+            observableProcess.setId(processId);
+            observableProcess.setState(ObservableProcessStateEnum.NOT_OBSERVED);
+            observableProcess.setLastObservedState(ObservableProcessStateEnum.NOT_OBSERVED);
+        }
+
         try {
-            //TODO controlla condizione di GO/ABORT
-            logger.info("Start dealing with {} event", event);
-            switch (event) {
-                case CREATE:
-                    observableProcess = new ObservableProcess();
-                    observableProcess.setId(processId);
-                    observableProcess.setState(ObservableProcessStateEnum.PUT_DOCUMENT_IN_PROGRESS);
-                    observableProcess.setLastObservedState(ObservableProcessStateEnum.NOT_OBSERVED);
-                    //Async call -> this call an external service
-                    executorService.execute(new CreateEventTask(documentTemplate, processId, eventPublisher));
-                    observableProcessStorage.saveProcess(observableProcess);
-                    break;
-                case PUT_DOCUMENT_COMPLETED:
-                    observableProcess = observableProcessStorage.retrieveProcess(processId);
-                    observableProcess.setState(ObservableProcessStateEnum.WAITED_IN_PROGRESS);
-                    //Async call -> this just perform local stuff
-                    executorService.execute(new PutDocumentCompletedEventTask(processId, eventPublisher));
-                    observableProcessStorage.saveProcess(observableProcess);
-                    break;
-                case WAITED_COMPLETED:
-                    observableProcess = observableProcessStorage.retrieveProcess(processId);
-                    observableProcess.setState(ObservableProcessStateEnum.END);
-                    //No call to service, just end the process
-                    observableProcessStorage.saveProcess(observableProcess);
-                    break;
-                default:
-                    //it should never happen
-                    observableProcess = null;
+            //Proceed if the starting state and the transition asked are ok
+            ObservableProcessStateEnum startingState = properties.getTransitions().get(event).getFrom();
+            //If the event arrives to two different applications/thread, one of that has the lock, so it will stop it
+            if(startingState == observableProcess.getState()) {
+                logger.info("Start dealing with {} event", event);
+                switch (event) {
+                    case CREATE:
+                        //Async call -> this call an external service
+                        executorService.execute(new CreateEventTask(documentTemplate, processId, eventPublisher));
+                        observableProcess.setState(ObservableProcessStateEnum.PUT_DOCUMENT_IN_PROGRESS);
+                        break;
+                    case PUT_DOCUMENT_COMPLETED:
+                        //Async call -> this just perform local stuff
+                        executorService.execute(new PutDocumentCompletedEventTask(processId, eventPublisher));
+                        observableProcess.setState(ObservableProcessStateEnum.WAITED_IN_PROGRESS);
+                        break;
+                    case WAITED_COMPLETED:
+                        //No call to service, just end the process
+                        observableProcess.setState(ObservableProcessStateEnum.END);
+                        break;
+                    default:
+                        //it should never happen
+                        observableProcess = null;
+                }
+                observableProcessStorage.saveProcess(observableProcess);
+                concurrencyHelper.getChangedStatusCondition().signalAll();
+            } else {
+                logger.warn("Event {} discarded because actual state is {} while expected state is {}",
+                        event, observableProcess.getState(), startingState);
             }
-            concurrencyHelper.getCondition().signalAll();
         } finally {
             concurrencyHelper.getLock().unlock();
         }
@@ -113,8 +124,9 @@ public class ObservableProcessManager {
         try {
             //Check condition
             while ((observableProcess = observableProcessStorage.retrieveProcess(processId)).getState().equals(lastObservedState)) {
+                Integer timeout = properties.getStates().get(observableProcess.getState()).getTimeout();
                 //Await on condition
-                boolean await = concurrencyHelper.getCondition().await(properties.getTimeouts().get(observableProcess.getState()), TimeUnit.SECONDS);
+                boolean await = concurrencyHelper.getChangedStatusCondition().await(timeout, TimeUnit.SECONDS);
                 if(!await) {
                     logger.info("Request timeout!");
                     break;
@@ -132,36 +144,30 @@ public class ObservableProcessManager {
 
     }
 
-    public enum EventTypeEnum {
-        CREATE, PUT_DOCUMENT_COMPLETED, WAITED_COMPLETED
-    }
-
     public static class ConcurrencyHelper {
 
         private Lock lock;
-        private Condition condition;
+        private Condition changedStatusCondition;
+        private Condition workDoneCondition;
 
         public ConcurrencyHelper() {}
 
         public ConcurrencyHelper(Lock lock) {
             this.lock = lock;
-            this.condition = lock.newCondition();
+            this.changedStatusCondition = lock.newCondition();
+            this.workDoneCondition = lock.newCondition();
         }
 
         public Lock getLock() {
             return lock;
         }
 
-        public void setLock(Lock lock) {
-            this.lock = lock;
+        public Condition getChangedStatusCondition() {
+            return changedStatusCondition;
         }
 
-        public Condition getCondition() {
-            return condition;
-        }
-
-        public void setCondition(Condition condition) {
-            this.condition = condition;
+        public Condition getWorkDoneCondition() {
+            return workDoneCondition;
         }
     }
 

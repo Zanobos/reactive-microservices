@@ -27,7 +27,7 @@ public class ObservableProcessEventListener{
     public void handleRabbitMessage(@Payload EventTaskMessage message) {
         logger.info("Received message! {}", message);
         try {
-            observableProcessManager.executeEvent(message.getEventTypeEnum(), message.getProcessId());
+            observableProcessManager.executeEvent(message.getTransition(), message.getProcessId());
         } catch (Exception e) {
             logger.error("Error in manager, but concluding gracefully so that message is removed");
         }

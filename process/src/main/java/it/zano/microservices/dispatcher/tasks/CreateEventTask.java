@@ -1,6 +1,5 @@
 package it.zano.microservices.dispatcher.tasks;
 
-import it.zano.microservices.dispatcher.ObservableProcessManager;
 import it.zano.microservices.event.observableprocess.EventTaskMessage;
 import it.zano.microservices.event.observableprocess.ObservableProcessEventPublisher;
 import it.zano.microservices.webservices.documents.DocumentResource;
@@ -8,6 +7,8 @@ import it.zano.microservices.webservices.documents.DocumentTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static it.zano.microservices.model.beans.ObservableProcessTransitionEnum.PUT_DOCUMENT_COMPLETED;
 
 /**
  * @author a.zanotti
@@ -37,7 +38,7 @@ public class CreateEventTask extends BaseTask {
         documentTemplate.put(documentTemplate.getEndpoint() + "{" + URI_ID + "}", document, uriVariables);
         EventTaskMessage message = new EventTaskMessage();
         message.setProcessId(id);
-        message.setEventTypeEnum(ObservableProcessManager.EventTypeEnum.PUT_DOCUMENT_COMPLETED);
+        message.setTransition(PUT_DOCUMENT_COMPLETED);
         eventPublisher.sendMessage(message);
     }
 }
