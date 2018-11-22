@@ -29,3 +29,10 @@ rest-template:
   document-service:
     name: "DocumentsService"
     endpoint: "http://localhost:13000/documents/"
+
+observable-process-manager:
+  timeouts:
+    NOT_OBSERVED: 0
+    PUT_DOCUMENT_IN_PROGRESS: 5
+    WAITED_IN_PROGRESS: 5
+    END: 0

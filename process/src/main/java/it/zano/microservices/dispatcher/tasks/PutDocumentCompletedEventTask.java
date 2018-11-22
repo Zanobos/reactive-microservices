@@ -21,7 +21,7 @@ public class PutDocumentCompletedEventTask extends BaseTask{
     @Override
     protected void doRun() {
         try {
-            Thread.sleep(15000);
+            Thread.sleep(12000);
             EventTaskMessage message = new EventTaskMessage();
             message.setProcessId(id);
             message.setEventTypeEnum(ObservableProcessManager.EventTypeEnum.WAITED_COMPLETED);

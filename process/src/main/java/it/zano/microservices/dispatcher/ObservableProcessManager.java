@@ -11,10 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -33,14 +30,17 @@ public class ObservableProcessManager {
     private final ExecutorService executorService;
     private final ObservableProcessEventPublisher eventPublisher;
     private final ConcurrentMap<Integer,ConcurrencyHelper> concurrencyHelperMap;
+    private final ObservableProcessManagerProperties properties;
 
     @Autowired
     public ObservableProcessManager(ObservableProcessStorage observableProcessStorage,
                                     ObservableProcessEventPublisher eventPublisher,
+                                    ObservableProcessManagerProperties properties,
                                     DocumentTemplate documentTemplate) {
         this.observableProcessStorage = observableProcessStorage;
         this.eventPublisher = eventPublisher;
         this.documentTemplate = documentTemplate;
+        this.properties = properties;
         this.executorService = Executors.newWorkStealingPool();
         this.concurrencyHelperMap = new ConcurrentHashMap<>();
     }
@@ -114,14 +114,17 @@ public class ObservableProcessManager {
         ObservableProcessStateEnum lastObservedState = observableProcess.getLastObservedState();
         try {
             //Check condition
-            while (lastObservedState.equals(observableProcessStorage.retrieveProcess(processId).getState())) {
+            while ((observableProcess = observableProcessStorage.retrieveProcess(processId)).getState().equals(lastObservedState)) {
                 //Await on condition
-                concurrencyHelper.getCondition().await();
+                boolean await = concurrencyHelper.getCondition().await(properties.getTimeouts().get(observableProcess.getState()), TimeUnit.SECONDS);
+                if(!await) {
+                    logger.info("Request timeout!");
+                    break;
+                }
             }
             observableProcess.observe();
             observableProcessStorage.saveProcess(observableProcess);
         } catch (InterruptedException e) {
-            //TODO timeout
             logger.warn(e.getMessage());
         } finally {
             concurrencyHelper.getLock().unlock();
