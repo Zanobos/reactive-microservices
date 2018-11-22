@@ -19,7 +19,7 @@ public class PutDocumentCompletedEventTask extends BaseTask{
     }
 
     @Override
-    protected void doRun() {
+    protected void execute() {
         try {
             Thread.sleep(12000);
             EventTaskMessage message = new EventTaskMessage();

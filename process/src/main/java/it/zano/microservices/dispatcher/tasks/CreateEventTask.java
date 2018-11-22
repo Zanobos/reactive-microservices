@@ -28,7 +28,7 @@ public class CreateEventTask extends BaseTask {
     }
 
     @Override
-    protected void doRun() {
+    protected void execute() {
         Map<String, String> uriVariables = new HashMap<>();
         uriVariables.put(URI_ID, "" + id);
         DocumentResource document = new DocumentResource();

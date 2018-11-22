@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * True command pattern
  * @author a.zanotti
  * @since 21/11/2018
  */
@@ -14,9 +15,9 @@ public abstract class BaseTask implements Runnable {
     @Override
     public final void run() {
         logger.info("Start run");
-        doRun();
+        execute();
         logger.info("Completed run");
     }
 
-    protected abstract void doRun();
+    protected abstract void execute();
 }
