@@ -1,7 +1,7 @@
 package it.zano.microservices.rest.resources;
 
 import it.zano.microservices.controller.rest.BaseResource;
-import it.zano.microservices.model.beans.ObservableProcessStateEnum;
+import it.zano.microservices.observableprocess.OprocStateEnum;
 
 /**
  * @author a.zanotti
@@ -10,7 +10,7 @@ import it.zano.microservices.model.beans.ObservableProcessStateEnum;
 public class ObservableProcessResource extends BaseResource {
 
     private Integer processId;
-    private ObservableProcessStateEnum state;
+    private OprocStateEnum actualState;
 
     public Integer getProcessId() {
         return processId;
@@ -20,11 +20,11 @@ public class ObservableProcessResource extends BaseResource {
         this.processId = processId;
     }
 
-    public ObservableProcessStateEnum getState() {
-        return state;
+    public OprocStateEnum getActualState() {
+        return actualState;
     }
 
-    public void setState(ObservableProcessStateEnum state) {
-        this.state = state;
+    public void setActualState(OprocStateEnum actualState) {
+        this.actualState = actualState;
     }
 }

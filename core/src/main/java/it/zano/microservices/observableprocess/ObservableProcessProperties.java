@@ -1,5 +1,6 @@
 package it.zano.microservices.observableprocess;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -8,14 +9,14 @@ import java.util.Map;
  */
 public abstract class ObservableProcessProperties<STATE, TRANSITION> {
 
-    private Map<STATE,StateInfo> states;
+    private Map<STATE,StateInfo<TRANSITION>> states;
     private Map<TRANSITION, TransitionInfo<STATE>> transitions;
 
-    public Map<STATE, StateInfo> getStates() {
+    public Map<STATE, StateInfo<TRANSITION>> getStates() {
         return states;
     }
 
-    public void setStates(Map<STATE, StateInfo> states) {
+    public void setStates(Map<STATE, StateInfo<TRANSITION>> states) {
         this.states = states;
     }
 
@@ -27,9 +28,10 @@ public abstract class ObservableProcessProperties<STATE, TRANSITION> {
         this.transitions = transitions;
     }
 
-    public static class StateInfo {
+    public static class StateInfo<TRANSITION> {
 
         private Integer timeout;
+        private List<TRANSITION> transitions;
 
         public Integer getTimeout() {
             return timeout;
@@ -39,6 +41,13 @@ public abstract class ObservableProcessProperties<STATE, TRANSITION> {
             this.timeout = timeout;
         }
 
+        public List<TRANSITION> getTransitions() {
+            return transitions;
+        }
+
+        public void setTransitions(List<TRANSITION> transitions) {
+            this.transitions = transitions;
+        }
     }
 
     public static class TransitionInfo<STATE> {

@@ -6,6 +6,6 @@ package it.zano.microservices.observableprocess;
  */
 public interface TransitionNotifier<TRANSITION, IDTYPE> {
 
-    void notifyTransition(TRANSITION transition, IDTYPE id);
+    void notifyTransitionCompleted(TRANSITION transition, IDTYPE id);
 
 }

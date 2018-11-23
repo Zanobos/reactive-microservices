@@ -13,22 +13,22 @@ public abstract class BaseTransitionTask<TRANSITION,IDTYPE> implements Runnable 
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private TransitionNotifier<TRANSITION,IDTYPE> transitionNotifier;
-    private ThreadLocal<TRANSITION> transitionThreadLocal;
-    private ThreadLocal<IDTYPE> idtypeThreadLocal;
+    protected ThreadLocal<TRANSITION> transition;
+    protected ThreadLocal<IDTYPE> id;
 
     public BaseTransitionTask(TransitionNotifier<TRANSITION,IDTYPE> transitionNotifier,
                               TRANSITION transition,
                               IDTYPE id) {
         this.transitionNotifier = transitionNotifier;
-        this.transitionThreadLocal = ThreadLocal.withInitial(() -> transition);
-        this.idtypeThreadLocal = ThreadLocal.withInitial(() -> id);
+        this.transition = ThreadLocal.withInitial(() -> transition);
+        this.id = ThreadLocal.withInitial(() -> id);
     }
 
     @Override
     public final void run() {
         logger.info("Start run");
         execute();
-        transitionNotifier.notifyTransition(transitionThreadLocal.get(),idtypeThreadLocal.get());
+        transitionNotifier.notifyTransitionCompleted(transition.get(), id.get());
         logger.info("Completed run");
     }
 
