@@ -7,10 +7,10 @@ import java.util.concurrent.locks.Lock;
  * @author a.zanotti
  * @since 20/11/2018
  */
-public interface ObservableProcessPersistenceManager<STATE,IDTYPE> {
+public interface ObservableProcessPersistenceManager<STATE, IDTYPE, OPROC extends ObservableProcess<STATE,IDTYPE>> {
 
-    ObservableProcess<STATE> saveObservableProcess(ObservableProcess<STATE> observableProcess);
-    ObservableProcess<STATE> retrieveObservableProcess(IDTYPE id);
+    OPROC saveObservableProcess(OPROC observableProcess);
+    OPROC retrieveObservableProcess(IDTYPE id);
     Lock getLock(IDTYPE id);
     Condition getChangedStatusCondition(IDTYPE id);
 }

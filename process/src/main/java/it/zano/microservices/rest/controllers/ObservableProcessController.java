@@ -2,9 +2,9 @@ package it.zano.microservices.rest.controllers;
 
 import io.swagger.annotations.Api;
 import it.zano.microservices.controller.rest.BaseRestController;
-import it.zano.microservices.dispatcher.ObservableProcessManager;
 import it.zano.microservices.exception.MicroServiceException;
-import it.zano.microservices.model.beans.ObservableProcess;
+import it.zano.microservices.observableprocess.OprocImpl;
+import it.zano.microservices.observableprocess.OprocManagerImpl;
 import it.zano.microservices.rest.assembler.ObservableProcessAssembler;
 import it.zano.microservices.rest.resources.ObservableProcessResource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static it.zano.microservices.model.beans.ObservableProcessTransitionEnum.CREATE;
+import static it.zano.microservices.observableprocess.OprocTransitionEnum.CREATE;
 
 /**
  * @author a.zanotti
@@ -22,12 +22,12 @@ import static it.zano.microservices.model.beans.ObservableProcessTransitionEnum.
 @Api(tags = "oproc")
 @RestController
 @RequestMapping(value = "/oproc", produces = {MediaType.APPLICATION_JSON_VALUE})
-public class ObservableProcessController extends BaseRestController<ObservableProcess, ObservableProcessResource>{
+public class ObservableProcessController extends BaseRestController<OprocImpl, ObservableProcessResource>{
 
-    private ObservableProcessManager processManager;
+    private OprocManagerImpl processManager;
 
     @Autowired
-    protected ObservableProcessController(ObservableProcessAssembler assembler, ObservableProcessManager processManager) {
+    protected ObservableProcessController(ObservableProcessAssembler assembler, OprocManagerImpl processManager) {
         super(assembler);
         this.processManager = processManager;
     }
@@ -35,16 +35,16 @@ public class ObservableProcessController extends BaseRestController<ObservablePr
     @PostMapping
     public ResponseEntity<ObservableProcessResource> createObservableProcess(@RequestHeader HttpHeaders httpHeaders) {
         Integer processId = 1024;
-        ObservableProcess observableProcess = processManager.executeEvent(CREATE, processId);
-        ObservableProcessResource observableProcessResource = assembler.toResource(observableProcess);
+        OprocImpl oproc = processManager.executeEvent(CREATE, processId);
+        ObservableProcessResource observableProcessResource = assembler.toResource(oproc);
         return ResponseEntity.ok(observableProcessResource);
     }
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<ObservableProcessResource> getObservableProcess(@RequestHeader HttpHeaders httpHeaders,
                                                                           @PathVariable(value = "id") Integer id) throws MicroServiceException {
-        ObservableProcess observableProcess = processManager.getProcessStatus(id);
-        ObservableProcessResource observableProcessResource = assembler.toResource(observableProcess);
+        OprocImpl oprocImpl = processManager.getObservableProcessStatus(id);
+        ObservableProcessResource observableProcessResource = assembler.toResource(oprocImpl);
         return ResponseEntity.ok(observableProcessResource);
     }
 

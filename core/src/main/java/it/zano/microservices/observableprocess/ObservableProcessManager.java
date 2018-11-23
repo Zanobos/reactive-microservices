@@ -12,31 +12,32 @@ import java.util.concurrent.locks.Lock;
  * @author a.zanotti
  * @since 22/11/2018
  */
-public abstract class ObservableProcessManager<STATE, TRANSITION, IDTYPE> {
+public abstract class ObservableProcessManager<STATE, TRANSITION, IDTYPE,
+        OPROC extends ObservableProcess<STATE, IDTYPE>, TASK extends BaseTransitionTask<TRANSITION, IDTYPE>> {
 
     private final static Logger logger = LoggerFactory.getLogger(ObservableProcessManager.class);
 
-    private final ObservableProcessPersistenceManager<STATE,IDTYPE> persistenceManager;
+    private final ObservableProcessPersistenceManager<STATE,IDTYPE, OPROC> persistenceManager;
     private final ObservableProcessProperties<STATE, TRANSITION> properties;
-    private final TransitionTaskFactory<TRANSITION> transitionTaskFactory;
+    private final TransitionTaskFactory<TRANSITION, IDTYPE, TASK> transitionTaskFactory;
     private final ExecutorService executorService;
 
-    public ObservableProcessManager(ObservableProcessPersistenceManager<STATE, IDTYPE> persistenceManager,
+    public ObservableProcessManager(ObservableProcessPersistenceManager<STATE, IDTYPE, OPROC> persistenceManager,
                                     ObservableProcessProperties<STATE, TRANSITION> properties,
-                                    TransitionTaskFactory<TRANSITION> transitionTaskFactory) {
+                                    TransitionTaskFactory<TRANSITION, IDTYPE, TASK> transitionTaskFactory) {
         this.persistenceManager = persistenceManager;
         this.properties = properties;
         this.transitionTaskFactory = transitionTaskFactory;
         this.executorService = Executors.newWorkStealingPool();
     }
 
-    public ObservableProcess executeEvent(TRANSITION transition, IDTYPE processId) {
+    public OPROC executeEvent(TRANSITION transition, IDTYPE processId) {
 
         //Lock to protect against multiple events on same process. If we are in HA, this must be shared
         Lock lock = persistenceManager.getLock(processId);
         lock.lock();
         //Starting point
-        ObservableProcess<STATE> observableProcess = persistenceManager.retrieveObservableProcess(processId);
+        OPROC observableProcess = persistenceManager.retrieveObservableProcess(processId);
         //If the process requested does not exists, then it's a new process. I have to create one
         if(observableProcess == null) {
             observableProcess = createNew(processId);
@@ -51,7 +52,7 @@ public abstract class ObservableProcessManager<STATE, TRANSITION, IDTYPE> {
                 //I get from the configuration the landing state after the transition
                 STATE landingState = properties.getTransitions().get(transition).getTo();
                 //I create using a factory a task, that will be runned in a new thread. I specify the transition
-                BaseTransitionTask task = transitionTaskFactory.createTask(transition);
+                TASK task = transitionTaskFactory.createTask(transition, processId);
                 //I execute the task in a new thread
                 executorService.execute(task);
                 //While the thread is executing, I update the state - usually something ACTION_X_IN_PROGRESS
@@ -61,6 +62,7 @@ public abstract class ObservableProcessManager<STATE, TRANSITION, IDTYPE> {
                 //I notify all the threads that the process has changed status. Again, if we there are multiple JVMs
                 //this condition must be shared in some way
                 persistenceManager.getChangedStatusCondition(processId).signalAll();
+                logger.info("Finished dealing with {} event", transition);
             } else {
                 logger.warn("Event {} discarded because actual state is {} while expected state is {}",
                         transition, observableProcess.getActualState(), startingState);
@@ -68,18 +70,17 @@ public abstract class ObservableProcessManager<STATE, TRANSITION, IDTYPE> {
         } finally {
             lock.unlock();
         }
-        logger.info("Finished dealing with {} event", transition);
 
         return observableProcess;
     }
 
-    public ObservableProcess getObservableProcessStatus(IDTYPE processId) {
+    public OPROC getObservableProcessStatus(IDTYPE processId) {
 
         //Lock to protect against multiple events on same process. If we are in HA, this must be shared
         Lock lock = persistenceManager.getLock(processId);
         lock.lock();
         //Starting point. If the process is null, I asked for a non existent id
-        ObservableProcess<STATE> observableProcess = persistenceManager.retrieveObservableProcess(processId);
+        OPROC observableProcess = persistenceManager.retrieveObservableProcess(processId);
 
         //I get the last observed state
         STATE lastObservedState = observableProcess.getLastObservedState();
@@ -112,6 +113,6 @@ public abstract class ObservableProcessManager<STATE, TRANSITION, IDTYPE> {
 
     }
 
-    protected abstract ObservableProcess<STATE> createNew(IDTYPE processId);
+    protected abstract OPROC createNew(IDTYPE processId);
 
 }

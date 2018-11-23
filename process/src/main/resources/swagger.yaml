@@ -286,7 +286,7 @@ definitions:
       processId:
         type: "integer"
         format: "int32"
-      state:
+      actualState:
         type: "string"
         enum:
         - "NOT_OBSERVED"

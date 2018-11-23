@@ -1,6 +1,5 @@
-package it.zano.microservices.dispatcher;
+package it.zano.microservices.observableprocess;
 
-import it.zano.microservices.model.beans.ObservableProcess;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -13,26 +12,28 @@ import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author a.zanotti
- * @since 20/11/2018
+ * @since 23/11/2018
  */
 @Service
-public class ObservableProcessStorageMock implements ObservableProcessStorage{
+public class OprocPersistenceManagerImpl implements ObservableProcessPersistenceManager
+        <OprocStateEnum, Integer, OprocImpl>  {
 
-    private final Map<Integer, ObservableProcess> storage;
+    private final Map<Integer, OprocImpl> storage;
     private final ConcurrentMap<Integer,ConcurrencyHelper> concurrencyHelperMap;
 
-    public ObservableProcessStorageMock() {
+    public OprocPersistenceManagerImpl() {
         storage = new HashMap<>();
         concurrencyHelperMap = new ConcurrentHashMap<>();
     }
 
+
     @Override
-    public ObservableProcess saveProcess(ObservableProcess observableProcess) {
+    public OprocImpl saveObservableProcess(OprocImpl observableProcess) {
         return storage.put(observableProcess.getId(), observableProcess);
     }
 
     @Override
-    public ObservableProcess retrieveProcess(Integer id) {
+    public OprocImpl retrieveObservableProcess(Integer id) {
         return storage.get(id);
     }
 
@@ -47,13 +48,13 @@ public class ObservableProcessStorageMock implements ObservableProcessStorage{
 
     @Override
     public Condition getChangedStatusCondition(Integer id) {
-        //Add a new condition variable for this process
         ConcurrencyHelper concurrencyHelper = new ConcurrencyHelper(new ReentrantLock());
         ConcurrencyHelper oldValue = concurrencyHelperMap.putIfAbsent(id, concurrencyHelper);
         if(oldValue != null)
             concurrencyHelper = oldValue;
         return concurrencyHelper.getChangedStatusCondition();
     }
+
 
     public static class ConcurrencyHelper {
 

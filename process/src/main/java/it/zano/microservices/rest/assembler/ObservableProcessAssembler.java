@@ -1,7 +1,7 @@
 package it.zano.microservices.rest.assembler;
 
 import it.zano.microservices.controller.rest.BaseAssembler;
-import it.zano.microservices.model.beans.ObservableProcess;
+import it.zano.microservices.observableprocess.OprocImpl;
 import it.zano.microservices.rest.controllers.ObservableProcessController;
 import it.zano.microservices.rest.resources.ObservableProcessResource;
 import org.dozer.Mapper;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
  * @since 20/11/2018
  */
 @Service
-public class ObservableProcessAssembler extends BaseAssembler<ObservableProcess, ObservableProcessResource> {
+public class ObservableProcessAssembler extends BaseAssembler<OprocImpl, ObservableProcessResource> {
 
 
     @Autowired
@@ -22,14 +22,14 @@ public class ObservableProcessAssembler extends BaseAssembler<ObservableProcess,
     }
 
     @Override
-    public ObservableProcess toModelClass(ObservableProcessResource resource) {
-        ObservableProcess observableProcess = new ObservableProcess();
+    public OprocImpl toModelClass(ObservableProcessResource resource) {
+        OprocImpl observableProcess = new OprocImpl();
         mapper.map(resource,observableProcess);
         return observableProcess;
     }
 
     @Override
-    public ObservableProcessResource toResource(ObservableProcess observableProcess) {
+    public ObservableProcessResource toResource(OprocImpl observableProcess) {
         ObservableProcessResource observableProcessResource = createResourceWithId(observableProcess.getId(),observableProcess);
         mapper.map(observableProcess,observableProcessResource);
         observableProcessResource.setProcessId(observableProcess.getId());

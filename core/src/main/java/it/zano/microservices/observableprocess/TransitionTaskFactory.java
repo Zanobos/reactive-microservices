@@ -4,13 +4,13 @@ package it.zano.microservices.observableprocess;
  * @author a.zanotti
  * @since 22/11/2018
  */
-public abstract class TransitionTaskFactory<TRANSITION> {
+public abstract class TransitionTaskFactory<TRANSITION, IDTYPE, TASK extends BaseTransitionTask<TRANSITION, IDTYPE>> {
 
-    private final TransitionNotifier transitionNotifier;
+    protected final TransitionNotifier<TRANSITION, IDTYPE> transitionNotifier;
 
-    public TransitionTaskFactory(TransitionNotifier transitionNotifier) {
+    public TransitionTaskFactory(TransitionNotifier<TRANSITION, IDTYPE> transitionNotifier) {
         this.transitionNotifier = transitionNotifier;
     }
 
-    public abstract BaseTransitionTask createTask(TRANSITION transition);
+    public abstract TASK createTask(TRANSITION transition, IDTYPE id);
 }

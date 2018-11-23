@@ -34,12 +34,19 @@ observable-process-manager:
   states:
     NOT_OBSERVED:
       timeout: 0
+      transitions:
+        - "CREATE"
     PUT_DOCUMENT_IN_PROGRESS:
       timeout: 5
+      transitions:
+        - "PUT_DOCUMENT_COMPLETED"
     WAITED_IN_PROGRESS:
       timeout: 5
+      transitions:
+        - "WAITED_COMPLETED"
     END:
       timeout: 0
+      transitions:
   transitions:
     CREATE:
       from: "NOT_OBSERVED"
