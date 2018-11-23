@@ -32,7 +32,7 @@ public class OprocController {
 
     @PostMapping
     public ResponseEntity<OprocResource> saveObservableProcess(OprocResource observableProcess) {
-        return ResponseEntity.ok(storage.put(observableProcess.getProcessId(), observableProcess));
+        return ResponseEntity.ok(storage.put(observableProcess.getId(), observableProcess));
     }
 
     @GetMapping(value = "/{id}")

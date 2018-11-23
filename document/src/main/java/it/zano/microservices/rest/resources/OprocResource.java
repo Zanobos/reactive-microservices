@@ -6,16 +6,16 @@ package it.zano.microservices.rest.resources;
  */
 public class OprocResource {
 
-    private Integer processId;
+    private Integer id;
     private String actualState;
     private String lastObservedState;
 
-    public Integer getProcessId() {
-        return processId;
+    public Integer getId() {
+        return id;
     }
 
-    public void setProcessId(Integer processId) {
-        this.processId = processId;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getActualState() {

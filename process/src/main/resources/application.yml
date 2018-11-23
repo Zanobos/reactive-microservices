@@ -29,6 +29,9 @@ rest-template:
   document-service:
     name: "DocumentsService"
     endpoint: "http://localhost:13000/documents/"
+  oproc-service:
+    name: "OprocService"
+    endpoint: "http://localhost:13000/oproc/"
 
 observable-process-manager:
   states:

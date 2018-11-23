@@ -520,7 +520,7 @@ definitions:
   OprocResource:
     type: "object"
     properties:
-      processId:
+      id:
         type: "integer"
         format: "int32"
       actualState:
