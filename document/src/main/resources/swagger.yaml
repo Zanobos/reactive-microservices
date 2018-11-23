@@ -229,6 +229,33 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/ObservableProcessResource"
+  /oproc/{id}/lock:
+    get:
+      operationId: "lock"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "integer"
+        format: "int32"
+      responses:
+        default:
+          description: "successful operation"
+    post:
+      operationId: "unlock"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "integer"
+        format: "int32"
+      responses:
+        default:
+          description: "successful operation"
   /processes/{id}:
     get:
       tags:
@@ -490,6 +517,16 @@ definitions:
           xml:
             name: "link"
           $ref: "#/definitions/Link"
+  OprocResource:
+    type: "object"
+    properties:
+      processId:
+        type: "integer"
+        format: "int32"
+      actualState:
+        type: "string"
+      lastObservedState:
+        type: "string"
   ProcessResource:
     type: "object"
     properties:

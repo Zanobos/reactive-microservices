@@ -1,8 +1,5 @@
 package it.zano.microservices.observableprocess;
 
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-
 /**
  * @author a.zanotti
  * @since 20/11/2018
@@ -11,6 +8,8 @@ public interface ObservableProcessPersistenceManager<STATE, IDTYPE, OPROC extend
 
     OPROC saveObservableProcess(OPROC observableProcess);
     OPROC retrieveObservableProcess(IDTYPE id);
-    Lock getLock(IDTYPE id);
-    Condition getChangedStatusCondition(IDTYPE id);
+    void lock(IDTYPE id);
+    void unlock(IDTYPE id);
+    boolean await(IDTYPE id, long timeout) throws InterruptedException;
+    void signalAll(IDTYPE id);
 }

@@ -5,8 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Lock;
 
 /**
  * @author a.zanotti
@@ -22,7 +20,7 @@ public abstract class ObservableProcessManager<STATE, TRANSITION, IDTYPE,
     private final TransitionTaskFactory<TRANSITION, IDTYPE, TASK> transitionTaskFactory;
     private final ExecutorService executorService;
 
-    public ObservableProcessManager(ObservableProcessPersistenceManager<STATE, IDTYPE, OPROC> persistenceManager,
+    protected ObservableProcessManager(ObservableProcessPersistenceManager<STATE, IDTYPE, OPROC> persistenceManager,
                                     ObservableProcessProperties<STATE, TRANSITION> properties,
                                     TransitionTaskFactory<TRANSITION, IDTYPE, TASK> transitionTaskFactory) {
         this.persistenceManager = persistenceManager;
@@ -34,8 +32,7 @@ public abstract class ObservableProcessManager<STATE, TRANSITION, IDTYPE,
     public OPROC executeEvent(TRANSITION transition, IDTYPE processId) {
 
         //Lock to protect against multiple events on same process. If we are in HA, this must be shared
-        Lock lock = persistenceManager.getLock(processId);
-        lock.lock();
+        persistenceManager.lock(processId);
         //Starting point
         OPROC observableProcess = persistenceManager.retrieveObservableProcess(processId);
         //If the process requested does not exists, then it's a new process. I have to create one
@@ -61,14 +58,14 @@ public abstract class ObservableProcessManager<STATE, TRANSITION, IDTYPE,
                 persistenceManager.saveObservableProcess(observableProcess);
                 //I notify all the threads that the process has changed status. Again, if we there are multiple JVMs
                 //this condition must be shared in some way
-                persistenceManager.getChangedStatusCondition(processId).signalAll();
+                persistenceManager.signalAll(processId);
                 logger.info("Finished dealing with {} event", transition);
             } else {
                 logger.warn("Event {} discarded because actual state is {} while expected state is {}",
                         transition, observableProcess.getActualState(), startingState);
             }
         } finally {
-            lock.unlock();
+            persistenceManager.unlock(processId);
         }
 
         return observableProcess;
@@ -77,8 +74,7 @@ public abstract class ObservableProcessManager<STATE, TRANSITION, IDTYPE,
     public OPROC getObservableProcessStatus(IDTYPE processId) {
 
         //Lock to protect against multiple events on same process. If we are in HA, this must be shared
-        Lock lock = persistenceManager.getLock(processId);
-        lock.lock();
+        persistenceManager.lock(processId);
         //Starting point. If the process is null, I asked for a non existent id
         OPROC observableProcess = persistenceManager.retrieveObservableProcess(processId);
 
@@ -94,7 +90,7 @@ public abstract class ObservableProcessManager<STATE, TRANSITION, IDTYPE,
                 //return immediately
                 Integer timeout = properties.getStates().get(observableProcess.getActualState()).getTimeout();
                 //Await on condition, and with a timeout
-                boolean await = persistenceManager.getChangedStatusCondition(processId).await(timeout, TimeUnit.SECONDS);
+                boolean await = persistenceManager.await(processId, timeout);
                 if(!await) {
                     logger.info("Request timeout!");
                     break;
@@ -107,7 +103,7 @@ public abstract class ObservableProcessManager<STATE, TRANSITION, IDTYPE,
         } catch (InterruptedException e) {
             logger.warn(e.getMessage());
         } finally {
-            lock.unlock();
+            persistenceManager.unlock(processId);
         }
         return observableProcess;
 
