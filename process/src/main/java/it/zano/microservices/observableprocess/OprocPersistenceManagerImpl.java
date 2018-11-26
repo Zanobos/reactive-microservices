@@ -39,6 +39,12 @@ public class OprocPersistenceManagerImpl implements ObservableProcessPersistence
     }
 
     @Override
+    public void freeResources(Integer id) {
+        storage.remove(id);
+        concurrencyHelperMap.remove(id);
+    }
+
+    @Override
     public void lock(Integer id) {
         getLock(id).lock();
     }

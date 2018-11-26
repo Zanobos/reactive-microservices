@@ -36,7 +36,8 @@ public class ObservableProcessEventListener{
             OprocStateEnum landingState = properties.getTransitions().get(message.getTransition()).getTo();
             //When the transition is finished, I schedule the following one
             if(properties.getStates().get(landingState).getTransitions().isEmpty()) {
-                logger.info("No transition out from state {}, exiting", landingState);
+                observableProcessManager.clearResources(message.getProcessId());
+                logger.info("No transition out from state {}, exiting and removing resources", landingState);
             } else {
                 OprocTransitionEnum oprocTransitionEnum = properties.getStates().get(landingState).getTransitions().get(0);
                 observableProcessManager.executeEvent(oprocTransitionEnum, message.getProcessId());

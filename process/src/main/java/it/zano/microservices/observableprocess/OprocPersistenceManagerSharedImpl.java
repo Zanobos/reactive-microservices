@@ -65,6 +65,11 @@ public class OprocPersistenceManagerSharedImpl implements ObservableProcessPersi
     }
 
     @Override
+    public void freeResources(Integer id) {
+        lockMap.remove(id);
+    }
+
+    @Override
     public void lock(Integer id) {
         Map<String, String> uriVariables = new HashMap<>();
         uriVariables.put(URI_ID, "" + id);

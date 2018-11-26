@@ -109,6 +109,10 @@ public abstract class ObservableProcessManager<STATE, TRANSITION, IDTYPE,
 
     }
 
+    public void clearResources(IDTYPE processId) {
+
+    }
+
     protected abstract OPROC createNew(IDTYPE processId, Object... args);
 
 }
