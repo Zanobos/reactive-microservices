@@ -1,5 +1,6 @@
 package it.zano.microservices.observableprocess.tasks;
 
+import it.zano.microservices.observableprocess.OprocImpl;
 import it.zano.microservices.observableprocess.OprocTransitionEnum;
 import it.zano.microservices.observableprocess.TransitionNotifier;
 
@@ -9,8 +10,8 @@ import it.zano.microservices.observableprocess.TransitionNotifier;
  */
 public class OprocWaitedCompletedTask extends OprocBaseTask {
 
-    public OprocWaitedCompletedTask(TransitionNotifier<OprocTransitionEnum, Integer> transitionNotifier, OprocTransitionEnum oprocTransitionEnum, Integer id) {
-        super(transitionNotifier, oprocTransitionEnum, id);
+    public OprocWaitedCompletedTask(TransitionNotifier<OprocTransitionEnum, Integer> transitionNotifier, OprocTransitionEnum oprocTransitionEnum, OprocImpl process) {
+        super(transitionNotifier, oprocTransitionEnum, process);
     }
 
     @Override

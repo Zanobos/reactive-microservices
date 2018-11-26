@@ -1,5 +1,6 @@
 package it.zano.microservices.observableprocess.tasks;
 
+import it.zano.microservices.observableprocess.OprocImpl;
 import it.zano.microservices.observableprocess.OprocTransitionEnum;
 import it.zano.microservices.observableprocess.TransitionNotifier;
 import it.zano.microservices.webservices.documents.DocumentResource;
@@ -19,16 +20,16 @@ public class OprocCreateTask extends OprocBaseTask {
     private DocumentTemplate documentTemplate;
 
     public OprocCreateTask(TransitionNotifier<OprocTransitionEnum, Integer> transitionNotifier,
-                           OprocTransitionEnum oprocTransitionEnum, Integer id,
+                           OprocTransitionEnum oprocTransitionEnum, OprocImpl process,
                            DocumentTemplate documentTemplate) {
-        super(transitionNotifier, oprocTransitionEnum, id);
+        super(transitionNotifier, oprocTransitionEnum, process);
         this.documentTemplate = documentTemplate;
     }
 
     @Override
     protected void execute() {
         Map<String, String> uriVariables = new HashMap<>();
-        uriVariables.put(URI_ID, "" + id.get());
+        uriVariables.put(URI_ID, "" + process.get().getId());
         DocumentResource document = new DocumentResource();
         document.setDocumentTitle("ObservableTry");
         document.setSignature("ObservableSignature");

@@ -8,27 +8,27 @@ import org.slf4j.LoggerFactory;
  * @author a.zanotti
  * @since 21/11/2018
  */
-public abstract class BaseTransitionTask<TRANSITION,IDTYPE> implements Runnable {
+public abstract class BaseTransitionTask<TRANSITION,STATE, IDTYPE, OPROC extends ObservableProcess<STATE, IDTYPE>> implements Runnable {
 
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private TransitionNotifier<TRANSITION,IDTYPE> transitionNotifier;
     protected ThreadLocal<TRANSITION> transition;
-    protected ThreadLocal<IDTYPE> id;
+    protected ThreadLocal<OPROC> process;
 
     public BaseTransitionTask(TransitionNotifier<TRANSITION,IDTYPE> transitionNotifier,
                               TRANSITION transition,
-                              IDTYPE id) {
+                              OPROC process) {
         this.transitionNotifier = transitionNotifier;
         this.transition = ThreadLocal.withInitial(() -> transition);
-        this.id = ThreadLocal.withInitial(() -> id);
+        this.process = ThreadLocal.withInitial(() -> process);
     }
 
     @Override
     public final void run() {
         logger.info("Start run");
         execute();
-        transitionNotifier.notifyTransitionCompleted(transition.get(), id.get());
+        transitionNotifier.notifyTransitionCompleted(transition.get(), process.get().getId());
         logger.info("Completed run");
     }
 

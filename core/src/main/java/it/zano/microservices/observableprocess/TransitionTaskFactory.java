@@ -5,7 +5,7 @@ package it.zano.microservices.observableprocess;
  * @since 22/11/2018
  */
 public abstract class TransitionTaskFactory<TRANSITION, STATE, IDTYPE,
-         OPROC extends ObservableProcess<STATE, IDTYPE>, TASK extends BaseTransitionTask<TRANSITION, IDTYPE>> {
+         OPROC extends ObservableProcess<STATE, IDTYPE>, TASK extends BaseTransitionTask<TRANSITION, STATE, IDTYPE, OPROC>> {
 
     protected final TransitionNotifier<TRANSITION, IDTYPE> transitionNotifier;
 

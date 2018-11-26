@@ -31,15 +31,15 @@ public class OprocTaskFactoryImpl extends TransitionTaskFactory<OprocTransitionE
         OprocBaseTask oprocBaseTask;
         switch (oprocTransitionEnum) {
             case CREATE: {
-                oprocBaseTask = new OprocCreateTask(transitionNotifier, oprocTransitionEnum, oprocImpl.getId(), documentTemplate);
+                oprocBaseTask = new OprocCreateTask(transitionNotifier, oprocTransitionEnum, oprocImpl, documentTemplate);
                 break;
             }
             case PUT_DOCUMENT_COMPLETED: {
-                oprocBaseTask = new OprocPutDocumentCompletedTask(transitionNotifier, oprocTransitionEnum, oprocImpl.getId());
+                oprocBaseTask = new OprocPutDocumentCompletedTask(transitionNotifier, oprocTransitionEnum, oprocImpl);
                 break;
             }
             case WAITED_COMPLETED: {
-                oprocBaseTask = new OprocWaitedCompletedTask(transitionNotifier, oprocTransitionEnum, oprocImpl.getId());
+                oprocBaseTask = new OprocWaitedCompletedTask(transitionNotifier, oprocTransitionEnum, oprocImpl);
                 break;
             }
             default: {

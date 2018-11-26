@@ -11,7 +11,7 @@ import java.util.concurrent.Executors;
  * @since 22/11/2018
  */
 public abstract class ObservableProcessManager<STATE, TRANSITION, IDTYPE,
-        OPROC extends ObservableProcess<STATE, IDTYPE>, TASK extends BaseTransitionTask<TRANSITION, IDTYPE>> {
+        OPROC extends ObservableProcess<STATE, IDTYPE>, TASK extends BaseTransitionTask<TRANSITION, STATE, IDTYPE, OPROC>> {
 
     private final static Logger logger = LoggerFactory.getLogger(ObservableProcessManager.class);
 

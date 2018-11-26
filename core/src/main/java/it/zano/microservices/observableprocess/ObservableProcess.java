@@ -26,6 +26,10 @@ public abstract class ObservableProcess<STATE, IDTYPE> {
         return actualState;
     }
 
+    public IDTYPE getId() {
+        return id;
+    }
+
     public void setId(IDTYPE id) {
         this.id = id;
     }
