@@ -8,15 +8,15 @@ import org.slf4j.LoggerFactory;
  * @author a.zanotti
  * @since 21/11/2018
  */
-public abstract class BaseTransitionTask<TRANSITION,STATE, IDTYPE, OPROC extends ObservableProcess<STATE, IDTYPE>> implements Runnable {
+public abstract class BaseTransitionTask<TRANSITION,STATE, IDTYPE, MESSAGE, OPROC extends ObservableProcess<STATE, IDTYPE>> implements Runnable {
 
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private TransitionNotifier<TRANSITION,IDTYPE> transitionNotifier;
+    private TransitionNotifier<MESSAGE> transitionNotifier;
     protected ThreadLocal<TRANSITION> transition;
     protected ThreadLocal<OPROC> process;
 
-    public BaseTransitionTask(TransitionNotifier<TRANSITION,IDTYPE> transitionNotifier,
+    public BaseTransitionTask(TransitionNotifier<MESSAGE> transitionNotifier,
                               TRANSITION transition,
                               OPROC process) {
         this.transitionNotifier = transitionNotifier;
@@ -28,13 +28,13 @@ public abstract class BaseTransitionTask<TRANSITION,STATE, IDTYPE, OPROC extends
     public final void run() {
         logger.info("Start run");
         try {
-            execute();
-            transitionNotifier.notifyTransitionCompleted(transition.get(), process.get().getId());
+            MESSAGE message = execute();
+            transitionNotifier.notifyTransitionCompleted(message);
             logger.info("Completed run");
         } catch (Exception e) {
             logger.error("Run completed with error!", e);
         }
     }
 
-    protected abstract void execute();
+    protected abstract MESSAGE execute();
 }

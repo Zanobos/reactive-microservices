@@ -13,13 +13,13 @@ import org.springframework.stereotype.Service;
  * @since 23/11/2018
  */
 @Service
-public class OprocTaskFactoryImpl extends TransitionTaskFactory<OprocTransitionEnum, OprocStateEnum, Integer,
+public class OprocTaskFactoryImpl extends TransitionTaskFactory<OprocTransitionEnum, OprocStateEnum, Integer, OprocTransitionMessage,
         OprocImpl, OprocBaseTask> {
 
     private DocumentTemplate documentTemplate;
 
     @Autowired
-    public OprocTaskFactoryImpl(TransitionNotifier<OprocTransitionEnum, Integer> transitionNotifier,
+    public OprocTaskFactoryImpl(TransitionNotifier<OprocTransitionMessage> transitionNotifier,
                                 DocumentTemplate documentTemplate) {
         super(transitionNotifier);
         this.documentTemplate = documentTemplate;

@@ -2,6 +2,7 @@ package it.zano.microservices.observableprocess.tasks;
 
 import it.zano.microservices.observableprocess.OprocImpl;
 import it.zano.microservices.observableprocess.OprocTransitionEnum;
+import it.zano.microservices.observableprocess.OprocTransitionMessage;
 import it.zano.microservices.observableprocess.TransitionNotifier;
 
 /**
@@ -10,17 +11,19 @@ import it.zano.microservices.observableprocess.TransitionNotifier;
  */
 public class OprocPutDocumentCompletedTask extends OprocBaseTask {
 
-    public OprocPutDocumentCompletedTask(TransitionNotifier<OprocTransitionEnum, Integer> transitionNotifier,
-                                         OprocTransitionEnum oprocTransitionEnum, OprocImpl process) {
+    public OprocPutDocumentCompletedTask(TransitionNotifier<OprocTransitionMessage> transitionNotifier,
+                                         OprocTransitionEnum oprocTransitionEnum,
+                                         OprocImpl process) {
         super(transitionNotifier, oprocTransitionEnum, process);
     }
 
     @Override
-    protected void execute() {
+    protected OprocTransitionMessage execute() {
         try {
             Thread.sleep(12000);
         } catch (InterruptedException e) {
             logger.error("Error");
         }
+        return defaultMessage();
     }
 }

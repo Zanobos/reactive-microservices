@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class OprocTransitionNotifierImpl extends RabbitController
-        implements TransitionNotifier<OprocTransitionEnum, Integer>{
+        implements TransitionNotifier<OprocTransitionMessage>{
 
     private final static Logger logger = LoggerFactory.getLogger(OprocTransitionNotifierImpl.class);
 
@@ -25,8 +25,7 @@ public class OprocTransitionNotifierImpl extends RabbitController
     }
 
     @Override
-    public void notifyTransitionCompleted(OprocTransitionEnum oprocTransitionEnum, Integer id) {
-        OprocTransitionMessage message = new OprocTransitionMessage(oprocTransitionEnum,id);
+    public void notifyTransitionCompleted(OprocTransitionMessage message) {
         rabbitTemplate.convertAndSend(EventConfiguration.OPROC_EXCHANGE, RabbitConfiguration.FANOUT_ROUTING, message);
         logger.info("Sent {} to exchange {}", message, EventConfiguration.OPROC_EXCHANGE);
     }

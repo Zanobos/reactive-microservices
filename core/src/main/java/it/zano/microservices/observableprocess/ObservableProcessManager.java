@@ -10,19 +10,19 @@ import java.util.concurrent.Executors;
  * @author a.zanotti
  * @since 22/11/2018
  */
-public abstract class ObservableProcessManager<STATE, TRANSITION, IDTYPE,
-        OPROC extends ObservableProcess<STATE, IDTYPE>, TASK extends BaseTransitionTask<TRANSITION, STATE, IDTYPE, OPROC>> {
+public abstract class ObservableProcessManager<STATE, TRANSITION, IDTYPE, MESSAGE,
+        OPROC extends ObservableProcess<STATE, IDTYPE>, TASK extends BaseTransitionTask<TRANSITION, STATE, IDTYPE, MESSAGE, OPROC>> {
 
     private final static Logger logger = LoggerFactory.getLogger(ObservableProcessManager.class);
 
     private final ObservableProcessPersistenceManager<STATE,IDTYPE, OPROC> persistenceManager;
     private final ObservableProcessProperties<STATE, TRANSITION> properties;
-    private final TransitionTaskFactory<TRANSITION, STATE, IDTYPE, OPROC, TASK> transitionTaskFactory;
+    private final TransitionTaskFactory<TRANSITION, STATE, IDTYPE, MESSAGE, OPROC, TASK> transitionTaskFactory;
     private final ExecutorService executorService;
 
     protected ObservableProcessManager(ObservableProcessPersistenceManager<STATE, IDTYPE, OPROC> persistenceManager,
                                     ObservableProcessProperties<STATE, TRANSITION> properties,
-                                    TransitionTaskFactory<TRANSITION, STATE, IDTYPE, OPROC, TASK> transitionTaskFactory) {
+                                    TransitionTaskFactory<TRANSITION, STATE, IDTYPE, MESSAGE, OPROC, TASK> transitionTaskFactory) {
         this.persistenceManager = persistenceManager;
         this.properties = properties;
         this.transitionTaskFactory = transitionTaskFactory;
