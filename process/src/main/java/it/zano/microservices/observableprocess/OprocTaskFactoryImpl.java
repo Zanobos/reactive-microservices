@@ -13,7 +13,8 @@ import org.springframework.stereotype.Service;
  * @since 23/11/2018
  */
 @Service
-public class OprocTaskFactoryImpl extends TransitionTaskFactory<OprocTransitionEnum, Integer, OprocBaseTask> {
+public class OprocTaskFactoryImpl extends TransitionTaskFactory<OprocTransitionEnum, OprocStateEnum, Integer,
+        OprocImpl, OprocBaseTask> {
 
     private DocumentTemplate documentTemplate;
 
@@ -25,20 +26,20 @@ public class OprocTaskFactoryImpl extends TransitionTaskFactory<OprocTransitionE
     }
 
     @Override
-    public OprocBaseTask createTask(OprocTransitionEnum oprocTransitionEnum, Integer id) {
+    public OprocBaseTask createTask(OprocTransitionEnum oprocTransitionEnum, OprocImpl oprocImpl, Object... args) {
 
         OprocBaseTask oprocBaseTask;
         switch (oprocTransitionEnum) {
             case CREATE: {
-                oprocBaseTask = new OprocCreateTask(transitionNotifier, oprocTransitionEnum, id, documentTemplate);
+                oprocBaseTask = new OprocCreateTask(transitionNotifier, oprocTransitionEnum, oprocImpl.getId(), documentTemplate);
                 break;
             }
             case PUT_DOCUMENT_COMPLETED: {
-                oprocBaseTask = new OprocPutDocumentCompletedTask(transitionNotifier, oprocTransitionEnum, id);
+                oprocBaseTask = new OprocPutDocumentCompletedTask(transitionNotifier, oprocTransitionEnum, oprocImpl.getId());
                 break;
             }
             case WAITED_COMPLETED: {
-                oprocBaseTask = new OprocWaitedCompletedTask(transitionNotifier, oprocTransitionEnum, id);
+                oprocBaseTask = new OprocWaitedCompletedTask(transitionNotifier, oprocTransitionEnum, oprocImpl.getId());
                 break;
             }
             default: {

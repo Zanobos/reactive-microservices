@@ -15,12 +15,13 @@ public class OprocManagerImpl extends ObservableProcessManager<OprocStateEnum, O
     @Autowired
     public OprocManagerImpl(ObservableProcessPersistenceManager<OprocStateEnum, Integer, OprocImpl> persistenceManager,
                             ObservableProcessProperties<OprocStateEnum, OprocTransitionEnum> properties,
-                            TransitionTaskFactory<OprocTransitionEnum, Integer, OprocBaseTask> transitionTaskFactory) {
+                            TransitionTaskFactory<OprocTransitionEnum, OprocStateEnum, Integer, OprocImpl,
+                                    OprocBaseTask> transitionTaskFactory) {
         super(persistenceManager, properties, transitionTaskFactory);
     }
 
     @Override
-    protected OprocImpl createNew(Integer processId) {
+    protected OprocImpl createNew(Integer processId, Object... args) {
         OprocImpl oproc = new OprocImpl();
         oproc.init(processId, OprocStateEnum.NOT_OBSERVED);
         return oproc;

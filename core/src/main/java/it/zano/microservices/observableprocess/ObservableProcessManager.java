@@ -17,19 +17,19 @@ public abstract class ObservableProcessManager<STATE, TRANSITION, IDTYPE,
 
     private final ObservableProcessPersistenceManager<STATE,IDTYPE, OPROC> persistenceManager;
     private final ObservableProcessProperties<STATE, TRANSITION> properties;
-    private final TransitionTaskFactory<TRANSITION, IDTYPE, TASK> transitionTaskFactory;
+    private final TransitionTaskFactory<TRANSITION, STATE, IDTYPE, OPROC, TASK> transitionTaskFactory;
     private final ExecutorService executorService;
 
     protected ObservableProcessManager(ObservableProcessPersistenceManager<STATE, IDTYPE, OPROC> persistenceManager,
                                     ObservableProcessProperties<STATE, TRANSITION> properties,
-                                    TransitionTaskFactory<TRANSITION, IDTYPE, TASK> transitionTaskFactory) {
+                                    TransitionTaskFactory<TRANSITION, STATE, IDTYPE, OPROC, TASK> transitionTaskFactory) {
         this.persistenceManager = persistenceManager;
         this.properties = properties;
         this.transitionTaskFactory = transitionTaskFactory;
         this.executorService = Executors.newWorkStealingPool();
     }
 
-    public OPROC executeEvent(TRANSITION transition, IDTYPE processId) {
+    public OPROC executeEvent(TRANSITION transition, IDTYPE processId, Object... eventArgs) {
 
         //Lock to protect against multiple events on same process. If we are in HA, this must be shared
         persistenceManager.lock(processId);
@@ -37,7 +37,7 @@ public abstract class ObservableProcessManager<STATE, TRANSITION, IDTYPE,
         OPROC observableProcess = persistenceManager.retrieveObservableProcess(processId);
         //If the process requested does not exists, then it's a new process. I have to create one
         if(observableProcess == null) {
-            observableProcess = createNew(processId);
+            observableProcess = createNew(processId, eventArgs);
         }
 
         try {
@@ -49,7 +49,7 @@ public abstract class ObservableProcessManager<STATE, TRANSITION, IDTYPE,
                 //I get from the configuration the landing state after the transition
                 STATE landingState = properties.getTransitions().get(transition).getTo();
                 //I create using a factory a task, that will be runned in a new thread. I specify the transition
-                TASK task = transitionTaskFactory.createTask(transition, processId);
+                TASK task = transitionTaskFactory.createTask(transition, observableProcess, eventArgs);
                 //I execute the task in a new thread
                 executorService.execute(task);
                 //While the thread is executing, I update the state - usually something ACTION_X_IN_PROGRESS
@@ -109,6 +109,6 @@ public abstract class ObservableProcessManager<STATE, TRANSITION, IDTYPE,
 
     }
 
-    protected abstract OPROC createNew(IDTYPE processId);
+    protected abstract OPROC createNew(IDTYPE processId, Object... args);
 
 }
