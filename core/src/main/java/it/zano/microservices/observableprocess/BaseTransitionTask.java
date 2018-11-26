@@ -27,9 +27,13 @@ public abstract class BaseTransitionTask<TRANSITION,STATE, IDTYPE, OPROC extends
     @Override
     public final void run() {
         logger.info("Start run");
-        execute();
-        transitionNotifier.notifyTransitionCompleted(transition.get(), process.get().getId());
-        logger.info("Completed run");
+        try {
+            execute();
+            transitionNotifier.notifyTransitionCompleted(transition.get(), process.get().getId());
+            logger.info("Completed run");
+        } catch (Exception e) {
+            logger.error("Run completed with error!", e);
+        }
     }
 
     protected abstract void execute();
