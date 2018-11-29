@@ -110,7 +110,7 @@ public abstract class ObservableProcessManager<STATE, TRANSITION, IDTYPE, MESSAG
     }
 
     public void clearResources(IDTYPE processId) {
-
+        persistenceManager.freeResources(processId);
     }
 
     protected abstract OPROC createNew(IDTYPE processId, Object... args);
