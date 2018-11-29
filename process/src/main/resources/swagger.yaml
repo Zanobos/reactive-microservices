@@ -5,15 +5,15 @@ info:
   version: "1.1.0"
   title: "process"
 tags:
-- name: "oproc"
+- name: "oprocs"
 - name: "processes"
 - name: "state"
 - name: "users"
 paths:
-  /oproc:
+  /oprocs:
     post:
       tags:
-      - "oproc"
+      - "oprocs"
       operationId: "createObservableProcess"
       produces:
       - "application/json"
@@ -27,15 +27,20 @@ paths:
             type: "array"
             items:
               type: "string"
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/ObservableProcessResource"
       responses:
         200:
           description: "successful operation"
           schema:
             $ref: "#/definitions/ObservableProcessResource"
-  /oproc/{id}:
+  /oprocs/{id}:
     get:
       tags:
-      - "oproc"
+      - "oprocs"
       operationId: "getObservableProcess"
       produces:
       - "application/json"

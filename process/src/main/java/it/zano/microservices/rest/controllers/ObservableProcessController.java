@@ -19,9 +19,9 @@ import static it.zano.microservices.observableprocess.OprocTransitionEnum.CREATE
  * @author a.zanotti
  * @since 20/11/2018
  */
-@Api(tags = "oproc")
+@Api(tags = "oprocs")
 @RestController
-@RequestMapping(value = "/oproc", produces = {MediaType.APPLICATION_JSON_VALUE})
+@RequestMapping(value = "/oprocs", produces = {MediaType.APPLICATION_JSON_VALUE})
 public class ObservableProcessController extends BaseRestController<OprocImpl, ObservableProcessResource>{
 
     private OprocManagerImpl processManager;
@@ -33,9 +33,9 @@ public class ObservableProcessController extends BaseRestController<OprocImpl, O
     }
 
     @PostMapping
-    public ResponseEntity<ObservableProcessResource> createObservableProcess(@RequestHeader HttpHeaders httpHeaders) {
-        Integer processId = 1024;
-        OprocImpl oproc = processManager.executeEvent(CREATE, processId);
+    public ResponseEntity<ObservableProcessResource> createObservableProcess(@RequestHeader HttpHeaders httpHeaders,
+                                                                             @RequestBody ObservableProcessResource resource) {
+        OprocImpl oproc = processManager.executeEvent(CREATE, resource.getProcessId());
         ObservableProcessResource observableProcessResource = assembler.toResource(oproc);
         return ResponseEntity.ok(observableProcessResource);
     }
