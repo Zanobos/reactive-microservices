@@ -50,8 +50,12 @@ public abstract class ObservableProcessManager<STATE, TRANSITION, IDTYPE, MESSAG
                 STATE landingState = properties.getTransitions().get(transition).getTo();
                 //I create using a factory a task, that will be runned in a new thread. I specify the transition
                 TASK task = transitionTaskFactory.createTask(transition, observableProcess, eventArgs);
-                //I execute the task in a new thread
-                executorService.execute(task);
+                if(task == null){
+                    logger.info("The factory gave back a null task, putting nothing in execution");
+                } else {
+                    //I execute the task in a new thread
+                    executorService.execute(task);
+                }
                 //While the thread is executing, I update the state - usually something ACTION_X_IN_PROGRESS
                 observableProcess.setActualState(landingState);
                 //I save back the process in the persistence

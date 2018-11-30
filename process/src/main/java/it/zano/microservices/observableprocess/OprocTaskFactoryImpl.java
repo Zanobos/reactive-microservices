@@ -39,14 +39,11 @@ public class OprocTaskFactoryImpl extends TransitionTaskFactory<OprocTransitionE
                 oprocBaseTask = new OprocPutDocumentCompletedTask(transitionNotifier, oprocTransitionEnum, oprocImpl);
                 break;
             }
-            case WAITED_COMPLETED: {
-                oprocBaseTask = new OprocWaitedCompletedTask(transitionNotifier,oprocTransitionEnum,oprocImpl);
-                break;
-            }
             case AGAIN_WAITING_COMPLETED: {
                 oprocBaseTask = new OprocWaitedAgainCompletedTask(transitionNotifier, oprocTransitionEnum, oprocImpl);
                 break;
             }
+            case WAITED_COMPLETED:
             default: {
                 oprocBaseTask = null;
                 break;
