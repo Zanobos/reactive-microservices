@@ -44,7 +44,7 @@ public abstract class ObservableProcessManager<STATE, TRANSITION, IDTYPE, MESSAG
             //From the configured properties, I get the following expected state
             STATE startingState = properties.getTransitions().get(transition).getFrom();
             //If the transition is expecting the process to be in the right state, I go on, if not, abort
-            if(startingState == observableProcess.getActualState()) {
+            if(startingState.equals(observableProcess.getActualState())) {
                 logger.info("Start dealing with {} event", transition);
                 //I get from the configuration the landing state after the transition
                 STATE landingState = properties.getTransitions().get(transition).getTo();
@@ -75,32 +75,50 @@ public abstract class ObservableProcessManager<STATE, TRANSITION, IDTYPE, MESSAG
 
         //Lock to protect against multiple events on same process. If we are in HA, this must be shared
         persistenceManager.lock(processId);
-        //Starting point. If the process is null, I asked for a non existent id
-        OPROC observableProcess = persistenceManager.retrieveObservableProcess(processId);
 
-        //I get the last observed state
-        STATE lastObservedState = observableProcess.getLastObservedState();
+        //Starting point. If the process is null, I asked for a non existent id
+        OPROC observableProcess = null;
         try {
+            observableProcess = persistenceManager.retrieveObservableProcess(processId);
+            //If process does not exists, error, but not NPE, so we return null
+            if(observableProcess == null) {
+                throw new ObservableProcessNotFoundException();
+            }
+
+            //I get the last observed state
+            STATE lastObservedState = observableProcess.getLastObservedState();
+
             //In a while (to protect against spurious awakening) I get back the process from the persistence and
             // I check if the status is different from the last observed. If the status is the same of the last
             //time observed, I wait
-            while ((observableProcess = persistenceManager.retrieveObservableProcess(processId)).getActualState()
-                    .equals(lastObservedState)) {
-                //The amount to wait is different for each state. This allow us - for example, the last one to
-                //return immediately
-                Integer timeout = properties.getStates().get(observableProcess.getActualState()).getTimeout();
-                //Await on condition, and with a timeout
-                boolean await = persistenceManager.await(processId, timeout);
-                if(!await) {
-                    logger.info("Request timeout!");
-                    break;
+
+            //NPE here means process cancelled, I catch and throw Process cancelled
+            try {
+                while ((observableProcess = persistenceManager.retrieveObservableProcess(processId)).getActualState()
+                        .equals(lastObservedState)) {
+                    //The amount to wait is different for each state. This allow us - for example, the last one to
+                    //return immediately
+                    Integer timeout = properties.getStates().get(observableProcess.getActualState()).getTimeout();
+                    //Await on condition, and with a timeout
+                    boolean await = persistenceManager.await(processId, timeout);
+                    if (!await) {
+                        logger.info("Request timeout!");
+                        break;
+                    }
                 }
+            }
+            catch (NullPointerException npe) {
+                throw new ObservableProcessCancelledException();
             }
             //In any case, If I exit the loop, I have observed the process, and align the state consequently
             observableProcess.observe();
             //Save back the process in persistence
             persistenceManager.saveObservableProcess(observableProcess);
-        } catch (InterruptedException e) {
+        } catch (ObservableProcessCancelledException npe) {
+            observableProcess = createCancelledProcess(processId);
+        } catch (ObservableProcessNotFoundException nfe) {
+            logger.info("Asked for a process non existent {}, returning null", processId);
+        } catch (Exception e) {
             logger.warn(e.getMessage());
         } finally {
             persistenceManager.unlock(processId);
@@ -110,9 +128,19 @@ public abstract class ObservableProcessManager<STATE, TRANSITION, IDTYPE, MESSAG
     }
 
     public void clearResources(IDTYPE processId) {
-        persistenceManager.freeResources(processId);
+        persistenceManager.lock(processId);
+        persistenceManager.removeObservableProcess(processId);
+        persistenceManager.signalAll(processId);
+        persistenceManager.unlock(processId);
     }
+
+    protected abstract OPROC createCancelledProcess(IDTYPE processId);
 
     protected abstract OPROC createNew(IDTYPE processId, Object... args);
 
+    private static class ObservableProcessCancelledException extends Exception {
+    }
+
+    private static class ObservableProcessNotFoundException extends Exception {
+    }
 }

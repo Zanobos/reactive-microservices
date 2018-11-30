@@ -6,8 +6,4 @@ package it.zano.microservices.observableprocess;
  */
 public class OprocImpl extends ObservableProcess<OprocStateEnum, Integer> {
 
-    public Integer getId() {
-        return id;
-    }
-
 }

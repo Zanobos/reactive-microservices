@@ -64,6 +64,30 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/ObservableProcessResource"
+    delete:
+      tags:
+      - "oprocs"
+      operationId: "deleteObservableProcess"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          type: "object"
+          additionalProperties:
+            type: "array"
+            items:
+              type: "string"
+      - name: "id"
+        in: "path"
+        required: true
+        type: "integer"
+        format: "int32"
+      responses:
+        default:
+          description: "successful operation"
   /processes/{id}:
     get:
       tags:
@@ -297,6 +321,7 @@ definitions:
         - "NOT_OBSERVED"
         - "PUT_DOCUMENT_IN_PROGRESS"
         - "WAITED_IN_PROGRESS"
+        - "CANCELLED"
         - "END"
       links:
         type: "array"

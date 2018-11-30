@@ -8,7 +8,7 @@ public interface ObservableProcessPersistenceManager<STATE, IDTYPE, OPROC extend
 
     OPROC saveObservableProcess(OPROC observableProcess);
     OPROC retrieveObservableProcess(IDTYPE id);
-    void freeResources(IDTYPE id);
+    void removeObservableProcess(IDTYPE id);
     void lock(IDTYPE id);
     void unlock(IDTYPE id);
     boolean await(IDTYPE id, long timeout) throws InterruptedException;

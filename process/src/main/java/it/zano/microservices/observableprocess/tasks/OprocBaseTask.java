@@ -13,6 +13,6 @@ public abstract class OprocBaseTask extends BaseTransitionTask<OprocTransitionEn
     }
 
     protected OprocTransitionMessage defaultMessage() {
-        return new OprocTransitionMessage(transition.get(),process.get().getId());
+        return new OprocTransitionMessage(transition,process.getId());
     }
 }

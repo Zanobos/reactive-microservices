@@ -2,9 +2,7 @@ package it.zano.microservices.observableprocess;
 
 import it.zano.microservices.webservices.oprocremote.OprocResource;
 import it.zano.microservices.webservices.oprocremote.OprocTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -65,8 +63,8 @@ public class OprocPersistenceManagerSharedImpl implements ObservableProcessPersi
     }
 
     @Override
-    public void freeResources(Integer id) {
-        lockMap.remove(id);
+    public void removeObservableProcess(Integer id) {
+        //TODO should call remote delete
     }
 
     @Override

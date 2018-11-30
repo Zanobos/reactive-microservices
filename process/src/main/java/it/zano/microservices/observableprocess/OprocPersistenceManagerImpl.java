@@ -1,5 +1,7 @@
 package it.zano.microservices.observableprocess;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -19,8 +21,10 @@ import java.util.concurrent.locks.ReentrantLock;
 public class OprocPersistenceManagerImpl implements ObservableProcessPersistenceManager
         <OprocStateEnum, Integer, OprocImpl>  {
 
+    private final static Logger logger = LoggerFactory.getLogger(OprocPersistenceManagerImpl.class);
+
     private final Map<Integer, OprocImpl> storage;
-    private final ConcurrentMap<Integer,ConcurrencyHelper> concurrencyHelperMap;
+    private final ConcurrentMap<Integer,ConcurrencyHelper> concurrencyHelperMap;    
 
     public OprocPersistenceManagerImpl() {
         storage = new HashMap<>();
@@ -39,46 +43,73 @@ public class OprocPersistenceManagerImpl implements ObservableProcessPersistence
     }
 
     @Override
-    public void freeResources(Integer id) {
+    public void removeObservableProcess(Integer id) {
         storage.remove(id);
-        concurrencyHelperMap.remove(id);
     }
 
     @Override
     public void lock(Integer id) {
-        getLock(id).lock();
+        //always succeed in lock (and crate one, with condition, if it does not exist)
+        getOrCreateConcurrencyHelper(id).getLock().lock();
     }
 
     @Override
     public void unlock(Integer id) {
-        getLock(id).unlock();
+        Lock lock = getLock(id);
+        if (lock != null) {
+            lock.unlock();
+        } else {
+            logger.warn("Tried to unlock a non existent lock");
+        }
     }
 
     @Override
     public boolean await(Integer id, long timeout) throws InterruptedException {
-        return getCondition(id).await(timeout, TimeUnit.SECONDS);
+        Condition condition = getCondition(id);
+        if (condition != null) {
+            return condition.await(timeout, TimeUnit.SECONDS);
+        } else {
+            logger.warn("Tried to await a non condition of a non existent lock");
+            return false;
+        }
+
     }
 
     @Override
     public void signalAll(Integer id) {
-        getCondition(id).signalAll();
+        Condition condition = getCondition(id);
+        if (condition != null) {
+            condition.signalAll();
+        } else {
+            logger.warn("Tried to signal a condition of a non existent lock");
+        }
     }
 
     private Lock getLock(Integer id) {
-        return getConcurrencyHelper(id).getLock();
+        ConcurrencyHelper concurrencyHelper = getConcurrencyHelper(id);
+        return concurrencyHelper == null ? null : concurrencyHelper.getLock();
     }
 
     private Condition getCondition(Integer id) {
-        return getConcurrencyHelper(id).getChangedStatusCondition();
+        ConcurrencyHelper concurrencyHelper = getConcurrencyHelper(id);
+        return concurrencyHelper == null ? null : concurrencyHelper.getChangedStatusCondition();
+    }
+
+    private ConcurrencyHelper getOrCreateConcurrencyHelper(Integer id) {
+        ConcurrencyHelper concurrencyHelper = new ConcurrencyHelper(new ReentrantLock());
+        ConcurrencyHelper oldValue = concurrencyHelperMap.putIfAbsent(id, concurrencyHelper);
+        if(oldValue != null) {
+            concurrencyHelper = oldValue;
+        } else {
+            logger.info("First time dealing process id {}, creating a lock", id);
+        }
+        return concurrencyHelper;
     }
 
     private ConcurrencyHelper getConcurrencyHelper(Integer id) {
-        ConcurrencyHelper concurrencyHelper = new ConcurrencyHelper(new ReentrantLock());
-        ConcurrencyHelper oldValue = concurrencyHelperMap.putIfAbsent(id, concurrencyHelper);
-        if(oldValue != null)
-            concurrencyHelper = oldValue;
-        return concurrencyHelper;
+        return concurrencyHelperMap.get(id);
     }
+
 
     public static class ConcurrencyHelper {
 

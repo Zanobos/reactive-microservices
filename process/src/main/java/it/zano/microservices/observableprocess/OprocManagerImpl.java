@@ -21,6 +21,13 @@ public class OprocManagerImpl extends ObservableProcessManager<OprocStateEnum, O
     }
 
     @Override
+    protected OprocImpl createCancelledProcess(Integer processId) {
+        OprocImpl oproc = new OprocImpl();
+        oproc.init(processId, OprocStateEnum.CANCELLED);
+        return oproc;
+    }
+
+    @Override
     protected OprocImpl createNew(Integer processId, Object... args) {
         OprocImpl oproc = new OprocImpl();
         oproc.init(processId, OprocStateEnum.NOT_OBSERVED);

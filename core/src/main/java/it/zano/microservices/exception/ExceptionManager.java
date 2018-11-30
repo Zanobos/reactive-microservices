@@ -3,14 +3,8 @@ package it.zano.microservices.exception;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.servlet.http.HttpServletResponse;
@@ -25,8 +19,7 @@ import java.util.stream.Collectors;
 /**
  * @author a.zanotti
  */
-@ControllerAdvice
-public class ExceptionManager extends ResponseEntityExceptionHandler {
+public abstract class ExceptionManager extends ResponseEntityExceptionHandler {
 
 	private static final Logger logger = LoggerFactory.getLogger(ExceptionManager.class);
 	private static final Map<String, Method> handlerMap;
@@ -76,23 +69,6 @@ public class ExceptionManager extends ResponseEntityExceptionHandler {
 		MicroServiceExceptionResponse response = new MicroServiceExceptionResponse(exception);
 		completeLog(exception, !response.getMainError().getErrorType().equals(ErrorTypeEnum.BUSINESS),response.getMainError().getAdditionalInfo());
 		return generateErrorPayload(response);
-	}
-
-	@Override
-	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException exception,
-																  HttpHeaders headers, HttpStatus status, WebRequest request) {
-		MicroServiceExceptionResponse response = new MicroServiceExceptionResponse(exception);
-		completeLog(exception, !response.getMainError().getErrorType().equals(ErrorTypeEnum.BUSINESS),
-				response.getMainError().getAdditionalInfo());
-		return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
-	}
-
-	@Override
-	protected ResponseEntity<Object> handleBindException(BindException exception, HttpHeaders headers, HttpStatus status,
-														 WebRequest request) {
-		MicroServiceExceptionResponse response = new MicroServiceExceptionResponse(exception);
-		completeLog(exception, !response.getMainError().getErrorType().equals(ErrorTypeEnum.BUSINESS), response.getMainError().getAdditionalInfo());
-		return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	private ResponseEntity<MicroServiceExceptionResponse> generateErrorPayload(MicroServiceExceptionResponse response) {

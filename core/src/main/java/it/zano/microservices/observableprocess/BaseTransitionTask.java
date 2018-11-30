@@ -13,15 +13,15 @@ public abstract class BaseTransitionTask<TRANSITION,STATE, IDTYPE, MESSAGE, OPRO
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private TransitionNotifier<MESSAGE> transitionNotifier;
-    protected ThreadLocal<TRANSITION> transition;
-    protected ThreadLocal<OPROC> process;
+    protected TRANSITION transition;
+    protected OPROC process;
 
     public BaseTransitionTask(TransitionNotifier<MESSAGE> transitionNotifier,
                               TRANSITION transition,
                               OPROC process) {
         this.transitionNotifier = transitionNotifier;
-        this.transition = ThreadLocal.withInitial(() -> transition);
-        this.process = ThreadLocal.withInitial(() -> process);
+        this.transition = transition;
+        this.process = process;
     }
 
     @Override

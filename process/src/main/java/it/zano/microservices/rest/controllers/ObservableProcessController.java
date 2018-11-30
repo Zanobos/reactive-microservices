@@ -3,6 +3,7 @@ package it.zano.microservices.rest.controllers;
 import io.swagger.annotations.Api;
 import it.zano.microservices.controller.rest.BaseRestController;
 import it.zano.microservices.exception.MicroServiceException;
+import it.zano.microservices.exception.ObservableProcessNotFoundException;
 import it.zano.microservices.observableprocess.OprocImpl;
 import it.zano.microservices.observableprocess.OprocManagerImpl;
 import it.zano.microservices.rest.assembler.ObservableProcessAssembler;
@@ -44,8 +45,18 @@ public class ObservableProcessController extends BaseRestController<OprocImpl, O
     public ResponseEntity<ObservableProcessResource> getObservableProcess(@RequestHeader HttpHeaders httpHeaders,
                                                                           @PathVariable(value = "id") Integer id) throws MicroServiceException {
         OprocImpl oprocImpl = processManager.getObservableProcessStatus(id);
+        if(oprocImpl == null) {
+            throw new ObservableProcessNotFoundException(id);
+        }
         ObservableProcessResource observableProcessResource = assembler.toResource(oprocImpl);
         return ResponseEntity.ok(observableProcessResource);
+    }
+
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Void> deleteObservableProcess(@RequestHeader HttpHeaders httpHeaders,
+                                                        @PathVariable(value = "id") Integer id) throws MicroServiceException {
+        processManager.clearResources(id);
+        return ResponseEntity.ok().build();
     }
 
 }

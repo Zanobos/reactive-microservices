@@ -6,7 +6,7 @@ info:
   title: "document"
 tags:
 - name: "documents"
-- name: "oproc"
+- name: "oprocs"
 - name: "processes"
 - name: "state"
 - name: "users"
@@ -182,8 +182,62 @@ paths:
             $ref: "#/definitions/DocumentResource"
   /oproc:
     post:
+      operationId: "saveObservableProcess"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/OprocResource"
+  /oproc/{id}:
+    get:
+      operationId: "retrieveObservableProcess"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "integer"
+        format: "int32"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/OprocResource"
+  /oproc/{id}/lock:
+    get:
+      operationId: "lock"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "integer"
+        format: "int32"
+      responses:
+        default:
+          description: "successful operation"
+    post:
+      operationId: "unlock"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "integer"
+        format: "int32"
+      responses:
+        default:
+          description: "successful operation"
+  /oprocs:
+    post:
       tags:
-      - "oproc"
+      - "oprocs"
       operationId: "createObservableProcess"
       produces:
       - "application/json"
@@ -197,15 +251,20 @@ paths:
             type: "array"
             items:
               type: "string"
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/ObservableProcessResource"
       responses:
         200:
           description: "successful operation"
           schema:
             $ref: "#/definitions/ObservableProcessResource"
-  /oproc/{id}:
+  /oprocs/{id}:
     get:
       tags:
-      - "oproc"
+      - "oprocs"
       operationId: "getObservableProcess"
       produces:
       - "application/json"
@@ -229,25 +288,22 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/ObservableProcessResource"
-  /oproc/{id}/lock:
-    get:
-      operationId: "lock"
+    delete:
+      tags:
+      - "oprocs"
+      operationId: "deleteObservableProcess"
       produces:
       - "application/json"
       parameters:
-      - name: "id"
-        in: "path"
-        required: true
-        type: "integer"
-        format: "int32"
-      responses:
-        default:
-          description: "successful operation"
-    post:
-      operationId: "unlock"
-      produces:
-      - "application/json"
-      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          type: "object"
+          additionalProperties:
+            type: "array"
+            items:
+              type: "string"
       - name: "id"
         in: "path"
         required: true
@@ -506,6 +562,7 @@ definitions:
         - "NOT_OBSERVED"
         - "PUT_DOCUMENT_IN_PROGRESS"
         - "WAITED_IN_PROGRESS"
+        - "CANCELLED"
         - "END"
       links:
         type: "array"
