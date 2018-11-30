@@ -20,7 +20,7 @@ public class OprocWaitedCompletedTask extends OprocBaseTask {
     @Override
     protected OprocTransitionMessage execute() {
         //Do nothing
-        logger.info("Nothing to do");
-        return defaultMessage();
+        //Do not notify
+        return null;
     }
 }

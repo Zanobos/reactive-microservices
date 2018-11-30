@@ -12,7 +12,7 @@ public abstract class BaseTransitionTask<TRANSITION,STATE, IDTYPE, MESSAGE, OPRO
 
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private TransitionNotifier<MESSAGE> transitionNotifier;
+    protected TransitionNotifier<MESSAGE> transitionNotifier;
     protected TRANSITION transition;
     protected OPROC process;
 
@@ -29,12 +29,16 @@ public abstract class BaseTransitionTask<TRANSITION,STATE, IDTYPE, MESSAGE, OPRO
         logger.info("Start run");
         try {
             MESSAGE message = execute();
-            transitionNotifier.notifyTransitionCompleted(message);
+            if(message == null) {
+                logger.info("No message returned, no notification sent");
+            } else {
+                transitionNotifier.notifyTransitionCompleted(message);
+            }
             logger.info("Completed run");
         } catch (Exception e) {
             logger.error("Run completed with error!", e);
         }
     }
 
-    protected abstract MESSAGE execute();
+    protected abstract MESSAGE execute() throws InterruptedException;
 }

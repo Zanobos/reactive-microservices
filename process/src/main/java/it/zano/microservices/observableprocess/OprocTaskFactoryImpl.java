@@ -1,10 +1,9 @@
 package it.zano.microservices.observableprocess;
 
-import it.zano.microservices.observableprocess.tasks.OprocBaseTask;
-import it.zano.microservices.observableprocess.tasks.OprocCreateTask;
-import it.zano.microservices.observableprocess.tasks.OprocPutDocumentCompletedTask;
-import it.zano.microservices.observableprocess.tasks.OprocWaitedCompletedTask;
+import it.zano.microservices.observableprocess.tasks.*;
 import it.zano.microservices.webservices.documents.DocumentTemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +14,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class OprocTaskFactoryImpl extends TransitionTaskFactory<OprocTransitionEnum, OprocStateEnum, Integer, OprocTransitionMessage,
         OprocImpl, OprocBaseTask> {
+
+    private static final Logger logger = LoggerFactory.getLogger(OprocTaskFactoryImpl.class);
 
     private DocumentTemplate documentTemplate;
 
@@ -39,7 +40,11 @@ public class OprocTaskFactoryImpl extends TransitionTaskFactory<OprocTransitionE
                 break;
             }
             case WAITED_COMPLETED: {
-                oprocBaseTask = new OprocWaitedCompletedTask(transitionNotifier, oprocTransitionEnum, oprocImpl);
+                oprocBaseTask = new OprocWaitedCompletedTask(transitionNotifier,oprocTransitionEnum,oprocImpl);
+                break;
+            }
+            case AGAIN_WAITING_COMPLETED: {
+                oprocBaseTask = new OprocWaitedAgainCompletedTask(transitionNotifier, oprocTransitionEnum, oprocImpl);
                 break;
             }
             default: {

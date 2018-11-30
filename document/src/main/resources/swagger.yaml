@@ -562,6 +562,7 @@ definitions:
         - "NOT_OBSERVED"
         - "PUT_DOCUMENT_IN_PROGRESS"
         - "WAITED_IN_PROGRESS"
+        - "AGAIN_WAITING_IN_PROGRESS"
         - "CANCELLED"
         - "END"
       links:

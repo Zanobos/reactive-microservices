@@ -47,6 +47,10 @@ observable-process-manager:
       timeout: 5
       transitions:
         - "WAITED_COMPLETED"
+    AGAIN_WAITING_IN_PROGRESS:
+      timeout: 2
+      transitions:
+        - "AGAIN_WAITING_COMPLETED"
     END:
       timeout: 0
       transitions:
@@ -59,4 +63,7 @@ observable-process-manager:
       to: "WAITED_IN_PROGRESS"
     WAITED_COMPLETED:
       from: "WAITED_IN_PROGRESS"
+      to: "AGAIN_WAITING_IN_PROGRESS"
+    AGAIN_WAITING_COMPLETED:
+      from: "AGAIN_WAITING_IN_PROGRESS"
       to: "END"
