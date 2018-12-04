@@ -7,25 +7,25 @@ import java.util.Map;
  * @author a.zanotti
  * @since 22/11/2018
  */
-public abstract class ObservableProcessProperties<STATE, TRANSITION> {
+public abstract class ObservableProcessProperties<STATE, EVENT> {
 
-    private Map<STATE,StateInfo<TRANSITION>> states;
-    private Map<TRANSITION, TransitionInfo<STATE>> transitions;
+    private Map<STATE, StateInfo<EVENT>> states;
+    private Map<EVENT, EventInfo<STATE>> events;
 
-    public Map<STATE, StateInfo<TRANSITION>> getStates() {
+    public Map<STATE, StateInfo<EVENT>> getStates() {
         return states;
     }
 
-    public void setStates(Map<STATE, StateInfo<TRANSITION>> states) {
+    public void setStates(Map<STATE, StateInfo<EVENT>> states) {
         this.states = states;
     }
 
-    public Map<TRANSITION, TransitionInfo<STATE>> getTransitions() {
-        return transitions;
+    public Map<EVENT, EventInfo<STATE>> getEvents() {
+        return events;
     }
 
-    public void setTransitions(Map<TRANSITION, TransitionInfo<STATE>> transitions) {
-        this.transitions = transitions;
+    public void setEvents(Map<EVENT, EventInfo<STATE>> events) {
+        this.events = events;
     }
 
     public static class StateInfo<TRANSITION> {
@@ -50,7 +50,7 @@ public abstract class ObservableProcessProperties<STATE, TRANSITION> {
         }
     }
 
-    public static class TransitionInfo<STATE> {
+    public static class EventInfo<STATE> {
 
         private STATE from;
         private STATE to;

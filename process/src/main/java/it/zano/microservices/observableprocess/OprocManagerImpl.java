@@ -9,15 +9,15 @@ import org.springframework.stereotype.Service;
  * @since 23/11/2018
  */
 @Service
-public class OprocManagerImpl extends ObservableProcessManager<OprocStateEnum, OprocTransitionEnum, Integer, OprocTransitionMessage,
+public class OprocManagerImpl extends ObservableProcessManager<OprocStateEnum, OprocEventEnum, Integer, OprocEventMessage,
         OprocImpl, OprocBaseTask> {
 
     @Autowired
     public OprocManagerImpl(ObservableProcessPersistenceManager<OprocStateEnum, Integer, OprocImpl> persistenceManager,
-                            ObservableProcessProperties<OprocStateEnum, OprocTransitionEnum> properties,
-                            TransitionTaskFactory<OprocTransitionEnum, OprocStateEnum, Integer, OprocTransitionMessage, OprocImpl,
-                                    OprocBaseTask> transitionTaskFactory) {
-        super(persistenceManager, properties, transitionTaskFactory);
+                            ObservableProcessProperties<OprocStateEnum, OprocEventEnum> properties,
+                            TaskFactory<OprocEventEnum, OprocStateEnum, Integer, OprocEventMessage, OprocImpl,
+                                                                OprocBaseTask> taskFactory) {
+        super(persistenceManager, properties, taskFactory);
     }
 
     @Override

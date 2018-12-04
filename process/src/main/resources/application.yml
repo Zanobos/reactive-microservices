@@ -54,7 +54,7 @@ observable-process-manager:
     END:
       timeout: 0
       transitions:
-  transitions:
+  events:
     CREATE:
       from: "NOT_OBSERVED"
       to: "PUT_DOCUMENT_IN_PROGRESS"

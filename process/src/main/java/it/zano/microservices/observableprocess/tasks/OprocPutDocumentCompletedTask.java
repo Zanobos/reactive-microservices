@@ -1,9 +1,9 @@
 package it.zano.microservices.observableprocess.tasks;
 
+import it.zano.microservices.observableprocess.EventNotifier;
+import it.zano.microservices.observableprocess.OprocEventEnum;
+import it.zano.microservices.observableprocess.OprocEventMessage;
 import it.zano.microservices.observableprocess.OprocImpl;
-import it.zano.microservices.observableprocess.OprocTransitionEnum;
-import it.zano.microservices.observableprocess.OprocTransitionMessage;
-import it.zano.microservices.observableprocess.TransitionNotifier;
 
 /**
  * @author a.zanotti
@@ -11,21 +11,23 @@ import it.zano.microservices.observableprocess.TransitionNotifier;
  */
 public class OprocPutDocumentCompletedTask extends OprocBaseTask {
 
-    public OprocPutDocumentCompletedTask(TransitionNotifier<OprocTransitionMessage> transitionNotifier,
-                                         OprocTransitionEnum oprocTransitionEnum,
+    public OprocPutDocumentCompletedTask(EventNotifier<OprocEventMessage> eventNotifier,
+                                         OprocEventEnum oprocEventEnum,
                                          OprocImpl process) {
-        super(transitionNotifier, oprocTransitionEnum, process);
+        super(eventNotifier, oprocEventEnum, process);
     }
 
     @Override
-    protected OprocTransitionMessage execute() {
+    protected void execute() {
         try {
             Thread.sleep(7000);
-            transitionNotifier.notifyTransitionCompleted(defaultMessage());
+            OprocEventMessage message = new OprocEventMessage(OprocEventEnum.WAITED_COMPLETED, process.getId());
+            eventNotifier.notifyEvent(message);
             Thread.sleep(3000);
+            OprocEventMessage lastMessage = new OprocEventMessage(OprocEventEnum.AGAIN_WAITING_COMPLETED, process.getId());
+            eventNotifier.notifyEvent(lastMessage);
         } catch (InterruptedException e) {
             logger.error("Error");
         }
-        return new OprocTransitionMessage(OprocTransitionEnum.WAITED_COMPLETED,process.getId());
     }
 }

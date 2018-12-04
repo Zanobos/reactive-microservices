@@ -10,5 +10,5 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "observable-process-manager")
 public class OprocPropertiesImpl extends ObservableProcessProperties
-        <OprocStateEnum, OprocTransitionEnum> {
+        <OprocStateEnum, OprocEventEnum> {
 }

@@ -14,7 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static it.zano.microservices.observableprocess.OprocTransitionEnum.CREATE;
+import static it.zano.microservices.observableprocess.OprocEventEnum.CREATE;
 
 /**
  * @author a.zanotti

@@ -1,6 +1,9 @@
 package it.zano.microservices.observableprocess;
 
-import it.zano.microservices.observableprocess.tasks.*;
+import it.zano.microservices.observableprocess.tasks.OprocBaseTask;
+import it.zano.microservices.observableprocess.tasks.OprocClearTask;
+import it.zano.microservices.observableprocess.tasks.OprocCreateTask;
+import it.zano.microservices.observableprocess.tasks.OprocPutDocumentCompletedTask;
 import it.zano.microservices.webservices.documents.DocumentTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +15,7 @@ import org.springframework.stereotype.Service;
  * @since 23/11/2018
  */
 @Service
-public class OprocTaskFactoryImpl extends TransitionTaskFactory<OprocTransitionEnum, OprocStateEnum, Integer, OprocTransitionMessage,
+public class OprocTaskFactoryImpl extends TaskFactory<OprocEventEnum, OprocStateEnum, Integer, OprocEventMessage,
         OprocImpl, OprocBaseTask> {
 
     private static final Logger logger = LoggerFactory.getLogger(OprocTaskFactoryImpl.class);
@@ -20,27 +23,27 @@ public class OprocTaskFactoryImpl extends TransitionTaskFactory<OprocTransitionE
     private DocumentTemplate documentTemplate;
 
     @Autowired
-    public OprocTaskFactoryImpl(TransitionNotifier<OprocTransitionMessage> transitionNotifier,
+    public OprocTaskFactoryImpl(EventNotifier<OprocEventMessage> eventNotifier,
                                 DocumentTemplate documentTemplate) {
-        super(transitionNotifier);
+        super(eventNotifier);
         this.documentTemplate = documentTemplate;
     }
 
     @Override
-    public OprocBaseTask createTask(OprocTransitionEnum oprocTransitionEnum, OprocImpl oprocImpl, Object... args) {
+    public OprocBaseTask createTask(OprocEventEnum oprocEventEnum, OprocImpl oprocImpl, Object... args) {
 
         OprocBaseTask oprocBaseTask;
-        switch (oprocTransitionEnum) {
+        switch (oprocEventEnum) {
             case CREATE: {
-                oprocBaseTask = new OprocCreateTask(transitionNotifier, oprocTransitionEnum, oprocImpl, documentTemplate);
+                oprocBaseTask = new OprocCreateTask(eventNotifier, oprocEventEnum, oprocImpl, documentTemplate);
                 break;
             }
             case PUT_DOCUMENT_COMPLETED: {
-                oprocBaseTask = new OprocPutDocumentCompletedTask(transitionNotifier, oprocTransitionEnum, oprocImpl);
+                oprocBaseTask = new OprocPutDocumentCompletedTask(eventNotifier, oprocEventEnum, oprocImpl);
                 break;
             }
             case AGAIN_WAITING_COMPLETED: {
-                oprocBaseTask = new OprocWaitedAgainCompletedTask(transitionNotifier, oprocTransitionEnum, oprocImpl);
+                oprocBaseTask = new OprocClearTask(eventNotifier, oprocEventEnum, oprocImpl);
                 break;
             }
             case WAITED_COMPLETED:

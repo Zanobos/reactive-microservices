@@ -10,63 +10,63 @@ import java.util.concurrent.Executors;
  * @author a.zanotti
  * @since 22/11/2018
  */
-public abstract class ObservableProcessManager<STATE, TRANSITION, IDTYPE, MESSAGE,
-        OPROC extends ObservableProcess<STATE, IDTYPE>, TASK extends BaseTransitionTask<TRANSITION, STATE, IDTYPE, MESSAGE, OPROC>> {
+public abstract class ObservableProcessManager<STATE, EVENT, IDTYPE, MESSAGE,
+        OPROC extends ObservableProcess<STATE, IDTYPE>, TASK extends BaseTask<EVENT, STATE, IDTYPE, MESSAGE, OPROC>> {
 
     private final static Logger logger = LoggerFactory.getLogger(ObservableProcessManager.class);
 
-    private final ObservableProcessPersistenceManager<STATE,IDTYPE, OPROC> persistenceManager;
-    private final ObservableProcessProperties<STATE, TRANSITION> properties;
-    private final TransitionTaskFactory<TRANSITION, STATE, IDTYPE, MESSAGE, OPROC, TASK> transitionTaskFactory;
+    private final ObservableProcessPersistenceManager<STATE, IDTYPE, OPROC> persistenceManager;
+    private final ObservableProcessProperties<STATE, EVENT> properties;
+    private final TaskFactory<EVENT, STATE, IDTYPE, MESSAGE, OPROC, TASK> taskFactory;
     private final ExecutorService executorService;
 
     protected ObservableProcessManager(ObservableProcessPersistenceManager<STATE, IDTYPE, OPROC> persistenceManager,
-                                    ObservableProcessProperties<STATE, TRANSITION> properties,
-                                    TransitionTaskFactory<TRANSITION, STATE, IDTYPE, MESSAGE, OPROC, TASK> transitionTaskFactory) {
+                                       ObservableProcessProperties<STATE, EVENT> properties,
+                                       TaskFactory<EVENT, STATE, IDTYPE, MESSAGE, OPROC, TASK> taskFactory) {
         this.persistenceManager = persistenceManager;
         this.properties = properties;
-        this.transitionTaskFactory = transitionTaskFactory;
+        this.taskFactory = taskFactory;
         this.executorService = Executors.newWorkStealingPool();
     }
 
-    public OPROC executeEvent(TRANSITION transition, IDTYPE processId, Object... eventArgs) {
+    public OPROC executeEvent(EVENT EVENT, IDTYPE processId, Object... eventArgs) {
 
         //Lock to protect against multiple events on same process. If we are in HA, this must be shared
         persistenceManager.lock(processId);
         //Starting point
         OPROC observableProcess = persistenceManager.retrieveObservableProcess(processId);
         //If the process requested does not exists, then it's a new process. I have to create one
-        if(observableProcess == null) {
+        if (observableProcess == null) {
             observableProcess = createNew(processId, eventArgs);
         }
 
         try {
             //From the configured properties, I get the following expected state
-            STATE startingState = properties.getTransitions().get(transition).getFrom();
-            //If the transition is expecting the process to be in the right state, I go on, if not, abort
-            if(startingState.equals(observableProcess.getActualState())) {
-                logger.info("Start dealing with {} event", transition);
-                //I get from the configuration the landing state after the transition
-                STATE landingState = properties.getTransitions().get(transition).getTo();
-                //I create using a factory a task, that will be runned in a new thread. I specify the transition
-                TASK task = transitionTaskFactory.createTask(transition, observableProcess, eventArgs);
-                if(task == null){
+            STATE startingState = properties.getEvents().get(EVENT).getFrom();
+            //If the EVENT is expecting the process to be in the right state, I go on, if not, abort
+            if (startingState.equals(observableProcess.getActualState())) {
+                logger.info("Start dealing with {} event", EVENT);
+                //I get from the configuration the landing state after the EVENT
+                STATE landingState = properties.getEvents().get(EVENT).getTo();
+                //While the thread is executing, I update the state - usually something ACTION_X_IN_PROGRESS
+                observableProcess.setActualState(landingState);
+                //I save back the process in the persistence
+                persistenceManager.saveObservableProcess(observableProcess);
+                //I create using a factory a task, that will be runned in a new thread. I specify the EVENT
+                TASK task = taskFactory.createTask(EVENT, observableProcess, eventArgs);
+                if (task == null) {
                     logger.info("The factory gave back a null task, putting nothing in execution");
                 } else {
                     //I execute the task in a new thread
                     executorService.execute(task);
                 }
-                //While the thread is executing, I update the state - usually something ACTION_X_IN_PROGRESS
-                observableProcess.setActualState(landingState);
-                //I save back the process in the persistence
-                persistenceManager.saveObservableProcess(observableProcess);
                 //I notify all the threads that the process has changed status. Again, if we there are multiple JVMs
                 //this condition must be shared in some way
                 persistenceManager.signalAll(processId);
-                logger.info("Finished dealing with {} event", transition);
+                logger.info("Finished dealing with {} event", EVENT);
             } else {
                 logger.warn("Event {} discarded because actual state is {} while expected state is {}",
-                        transition, observableProcess.getActualState(), startingState);
+                        EVENT, observableProcess.getActualState(), startingState);
             }
         } finally {
             persistenceManager.unlock(processId);
@@ -85,7 +85,7 @@ public abstract class ObservableProcessManager<STATE, TRANSITION, IDTYPE, MESSAG
         try {
             observableProcess = persistenceManager.retrieveObservableProcess(processId);
             //If process does not exists, error, but not NPE, so we return null
-            if(observableProcess == null) {
+            if (observableProcess == null) {
                 throw new ObservableProcessNotFoundException();
             }
 
@@ -110,8 +110,7 @@ public abstract class ObservableProcessManager<STATE, TRANSITION, IDTYPE, MESSAG
                         break;
                     }
                 }
-            }
-            catch (NullPointerException npe) {
+            } catch (NullPointerException npe) {
                 throw new ObservableProcessCancelledException();
             }
             //In any case, If I exit the loop, I have observed the process, and align the state consequently

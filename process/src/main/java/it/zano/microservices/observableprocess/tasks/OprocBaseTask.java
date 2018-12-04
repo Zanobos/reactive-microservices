@@ -6,13 +6,10 @@ import it.zano.microservices.observableprocess.*;
  * @author a.zanotti
  * @since 23/11/2018
  */
-public abstract class OprocBaseTask extends BaseTransitionTask<OprocTransitionEnum, OprocStateEnum, Integer, OprocTransitionMessage, OprocImpl> {
+public abstract class OprocBaseTask extends BaseTask<OprocEventEnum, OprocStateEnum, Integer, OprocEventMessage, OprocImpl> {
 
-    public OprocBaseTask(TransitionNotifier<OprocTransitionMessage> transitionNotifier, OprocTransitionEnum oprocTransitionEnum, OprocImpl process) {
-        super(transitionNotifier, oprocTransitionEnum, process);
+    public OprocBaseTask(EventNotifier<OprocEventMessage> eventNotifier, OprocEventEnum oprocEventEnum, OprocImpl process) {
+        super(eventNotifier, oprocEventEnum, process);
     }
 
-    protected OprocTransitionMessage defaultMessage() {
-        return new OprocTransitionMessage(transition,process.getId());
-    }
 }
