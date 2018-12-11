@@ -25,7 +25,7 @@ public class EventConfiguration extends RabbitConfiguration {
     protected final Queue documentQueue;
 
     public final static String OPROC_EXCHANGE = "oproc";
-    private final static String OPROC_QUEUE = "oproc-" + UUID.randomUUID().toString();
+    public final static String OPROC_QUEUE = "oproc-" + UUID.randomUUID().toString();
     public final static String OPROC_QUEUE_MATCHER = "#{T(it.zano.microservices.event.EventConfiguration).OPROC_QUEUE}";
 
     protected final FanoutExchange oprocExchange;
