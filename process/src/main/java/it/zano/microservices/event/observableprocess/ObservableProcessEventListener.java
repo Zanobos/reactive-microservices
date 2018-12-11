@@ -27,7 +27,7 @@ public class ObservableProcessEventListener{
         this.observableProcessManager = observableProcessManager;
     }
 
-    @RabbitListener(queues = EventConfiguration.OPROC_QUEUE)
+    @RabbitListener(queues = EventConfiguration.OPROC_QUEUE_MATCHER)
     public void handleRabbitMessage(@Payload OprocEventMessage message) {
         logger.info("Received message! {}", message);
         try {

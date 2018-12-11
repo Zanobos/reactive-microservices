@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author a.zanotti
@@ -24,7 +25,8 @@ public class EventConfiguration extends RabbitConfiguration {
     protected final Queue documentQueue;
 
     public final static String OPROC_EXCHANGE = "oproc";
-    public final static String OPROC_QUEUE = "oproc";
+    private final static String OPROC_QUEUE = "oproc-" + UUID.randomUUID().toString();
+    public final static String OPROC_QUEUE_MATCHER = "#{T(it.zano.microservices.event.EventConfiguration).OPROC_QUEUE}";
 
     protected final FanoutExchange oprocExchange;
     protected final Queue oprocQueue;
@@ -34,7 +36,7 @@ public class EventConfiguration extends RabbitConfiguration {
         documentExchange = new FanoutExchange(DOCUMENT_EXCHANGE);
         documentQueue = new Queue(DOCUMENT_QUEUE);
         oprocExchange = new FanoutExchange(OPROC_EXCHANGE);
-        oprocQueue = new Queue(OPROC_QUEUE);
+        oprocQueue = new Queue(OPROC_QUEUE, false, true, true);
     }
 
     @Bean
