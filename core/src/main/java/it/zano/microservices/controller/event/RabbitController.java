@@ -1,6 +1,6 @@
 package it.zano.microservices.controller.event;
 
-import it.zano.microservices.config.RabbitConfiguration;
+import it.zano.microservices.config.ExchangesConfiguration;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 /**
@@ -16,6 +16,6 @@ public abstract class RabbitController {
     }
 
     public void sendToErrorExchange(ErrorMessage errorMessage) {
-        this.rabbitTemplate.convertAndSend(RabbitConfiguration.ROLLBACK_EXCHANGE,RabbitConfiguration.FANOUT_ROUTING, errorMessage);
+        this.rabbitTemplate.convertAndSend(ExchangesConfiguration.ROLLBACK_EXCHANGE, ExchangesConfiguration.FANOUT_ROUTING, errorMessage);
     }
 }

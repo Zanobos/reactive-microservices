@@ -1,6 +1,6 @@
 package it.zano.microservices.event;
 
-import it.zano.microservices.config.RabbitConfiguration;
+import it.zano.microservices.config.ExchangesConfiguration;
 import it.zano.microservices.controller.event.RabbitController;
 import it.zano.microservices.model.entities.Document;
 import it.zano.microservices.model.repositories.DocumentRepository;
@@ -29,10 +29,10 @@ public class DocumentsEventController extends RabbitController {
 
     public void signedDocumentFor(String documentId, String userId) {
         SignDocMessage signDocMessage = new SignDocMessage(documentId,userId);
-        rabbitTemplate.convertAndSend(DocumentsEventConfiguration.DOCUMENT_EXCHANGE, RabbitConfiguration.FANOUT_ROUTING,signDocMessage);
+        rabbitTemplate.convertAndSend(DocumentsEventConfiguration.DOCUMENT_EXCHANGE, ExchangesConfiguration.FANOUT_ROUTING,signDocMessage);
     }
 
-    @RabbitListener(queues = RabbitConfiguration.ROLLBACK_QUEUE)
+    @RabbitListener(queues = ExchangesConfiguration.ROLLBACK_QUEUE)
     public void handleRabbitMessage(@Payload ErrorInSignMessage errorMessage) {
         logger.info("Received message! {}",errorMessage);
         Document document = documentRepository.findById(Integer.parseInt(errorMessage.getDocumentId())).orElse(null);

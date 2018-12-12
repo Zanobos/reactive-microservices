@@ -1,6 +1,6 @@
 package it.zano.microservices.event;
 
-import it.zano.microservices.config.RabbitConfiguration;
+import it.zano.microservices.config.ExchangesConfiguration;
 import org.springframework.amqp.core.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,7 +12,7 @@ import java.util.List;
  * @since 19/10/2018
  */
 @Configuration
-public class DocumentsEventConfiguration extends RabbitConfiguration {
+public class DocumentsEventConfiguration extends ExchangesConfiguration {
 
     public final static String DOCUMENT_EXCHANGE = "documents";
     private final static String DOCUMENT_QUEUE = "documents";

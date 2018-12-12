@@ -1,6 +1,6 @@
 package it.zano.microservices.observableprocess;
 
-import it.zano.microservices.config.RabbitConfiguration;
+import it.zano.microservices.config.ExchangesConfiguration;
 import it.zano.microservices.controller.event.RabbitController;
 import it.zano.microservices.event.EventConfiguration;
 import org.slf4j.Logger;
@@ -26,7 +26,7 @@ public class OprocEventNotifierImpl extends RabbitController
 
     @Override
     public void notifyEvent(OprocEventMessage message) {
-        rabbitTemplate.convertAndSend(EventConfiguration.OPROC_EXCHANGE, RabbitConfiguration.FANOUT_ROUTING, message);
+        rabbitTemplate.convertAndSend(EventConfiguration.OPROC_EXCHANGE, ExchangesConfiguration.FANOUT_ROUTING, message);
         logger.info("Sent {} to exchange {}", message, EventConfiguration.OPROC_EXCHANGE);
     }
 }
