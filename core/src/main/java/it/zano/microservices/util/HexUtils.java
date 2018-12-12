@@ -2,7 +2,9 @@ package it.zano.microservices.util;
 
 import org.springframework.security.crypto.codec.Hex;
 
-public class HexUtils {
+public final class HexUtils {
+
+    private HexUtils() {}
 
     public static String toHexString(byte[] bytes) {
         return new String(Hex.encode(bytes));

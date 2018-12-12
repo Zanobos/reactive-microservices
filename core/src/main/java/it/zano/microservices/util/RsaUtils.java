@@ -12,7 +12,9 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 
-public class RsaUtils {
+public final class RsaUtils {
+
+    private RsaUtils() {}
 
     public static RsaVerifier createRsaVerifier(String hexModulus, String hexExponent) throws NoSuchAlgorithmException, InvalidKeySpecException {
 

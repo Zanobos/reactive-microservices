@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Arrays;
@@ -12,9 +11,11 @@ import java.util.Base64;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class CookieUtils {
+public final class CookieUtils {
 
     private static Logger logger = LoggerFactory.getLogger(CookieUtils.class);
+
+    private CookieUtils() {}
 
     public static final String DEFAULT_PATH = "/";
     public static final String MAX_AGE_ONE_DAY  = "" + 60*60*24;
@@ -30,7 +31,7 @@ public class CookieUtils {
 
     public static String getCookieValue(String name, HttpHeaders httpHeaders) {
         List<String> cookies = httpHeaders.get(HttpHeaders.COOKIE);
-        if(cookies == null || cookies.size() == 0)
+        if(cookies.size() == 0)
             return null;
         return getCookieValue(name, cookies);
     }
@@ -45,38 +46,15 @@ public class CookieUtils {
 
     //--- DELETE COOKIE
 
-    /**
-     * Useful to delete the cookie. Remember to add the uri endpoint to onboarding.security.allowedCookies.cookie-name.comesFrom
-     * in gateway configuration in order to be able to send the Set-Cookie header. Path will be considered as '/'.
-     * @param name
-     * @param httpHeaders can be null
-     * @return
-     */
     public static HttpHeaders deleteCookie(String name, HttpHeaders httpHeaders) {
         return deleteCookie(name, DEFAULT_PATH, httpHeaders);
     }
 
-    /**
-     * Useful to delete the cookie. Remember to add the uri endpoint to onboarding.security.allowedCookies.cookie-name.comesFrom
-     * in gateway configuration in order to be able to send the Set-Cookie header.
-     * @param name
-     * @param path fundamental to delete the right cookie.
-     * @param httpHeaders can be null
-     * @return
-     */
     public static HttpHeaders deleteCookie(String name, String path, HttpHeaders httpHeaders) {
         if(httpHeaders == null)
             httpHeaders = new HttpHeaders();
         httpHeaders.add(HttpHeaders.SET_COOKIE, createSetCookieDeleteContent(name, path));
         return httpHeaders;
-    }
-
-    public static void deleteCookie(String name, HttpServletResponse response) {
-        deleteCookie(name, DEFAULT_PATH, response);
-    }
-    
-    public static void deleteCookie(String name, String path, HttpServletResponse response) {
-        response.setHeader(HttpHeaders.SET_COOKIE, createSetCookieDeleteContent(name, path));
     }
 
     private static String createSetCookieDeleteContent(String name, String path) {

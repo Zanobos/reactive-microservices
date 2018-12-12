@@ -22,26 +22,27 @@ public class ArchConfiguration {
 
 	private static final Logger logger = LoggerFactory.getLogger(ArchConfiguration.class);
 
+	public static final ObjectMapper MAPPER;
+	static {
+		MAPPER = new ObjectMapper();
+		MAPPER.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+		MAPPER.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS,false);
+		MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		MAPPER.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
+		MAPPER.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+		MAPPER.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+
+		SimpleFilterProvider simpleFilterProvider = new SimpleFilterProvider();
+		simpleFilterProvider.setFailOnUnknownId(false);
+		MAPPER.setFilterProvider(simpleFilterProvider);
+	}
+
 	@Value("${spring.application.version:unknown}")
 	private String buildVersion;
 
 	@Bean
 	public ObjectMapper objectMapper() {
-
-		ObjectMapper mapper = new ObjectMapper();
-
-		mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS,false);
-		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
-		mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
-		mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
-
-		SimpleFilterProvider simpleFilterProvider = new SimpleFilterProvider();
-		simpleFilterProvider.setFailOnUnknownId(false);
-		mapper.setFilterProvider(simpleFilterProvider);
-
-		return mapper;
+		return MAPPER;
 	}
 
 	@Bean

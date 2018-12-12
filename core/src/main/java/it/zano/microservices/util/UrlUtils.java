@@ -2,7 +2,9 @@ package it.zano.microservices.util;
 
 import java.util.Map;
 
-public class UrlUtils {
+public final class UrlUtils {
+
+    private UrlUtils() {}
 
     public static String concatenateUrl(String baseUrl, String page) {
         if(baseUrl.endsWith("/") && page.startsWith("/"))

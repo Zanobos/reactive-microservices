@@ -3,15 +3,15 @@ package it.zano.microservices.util;
 import it.zano.microservices.exception.MicroServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-@Service
-public class HashUtils {
+public final class HashUtils {
 
     private static Logger logger = LoggerFactory.getLogger(HashUtils.class);
+
+    private HashUtils() {}
 
     private static MessageDigest initializeSha256() throws NoSuchAlgorithmException {
         String digestAlgorithm = "SHA-256";
@@ -23,13 +23,13 @@ public class HashUtils {
         }
     }
 
-    public String hash(String hexString) throws MicroServiceException {
+    public static String hash(String hexString) throws MicroServiceException {
         byte[] bytes = HexUtils.fromHexString(hexString);
         byte[] hashedBytes = hash(bytes);
         return HexUtils.toHexString(hashedBytes);
     }
 
-    public byte[] hash(byte[] bytes) throws MicroServiceException {
+    public static byte[] hash(byte[] bytes) throws MicroServiceException {
         try {
             MessageDigest sha256 = initializeSha256();
             return sha256.digest(bytes);

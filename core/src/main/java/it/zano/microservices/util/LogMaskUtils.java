@@ -9,24 +9,23 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class LogMaskUtils  {
+public final class LogMaskUtils  {
 
     private static final Logger logger = LoggerFactory.getLogger(LogMaskUtils.class);
 
+    private static final String LONG_XML_PREFIX = "LONGXML_";
     private static final String MASK_LONG_XML_FIELD = "<([^>]+)>([^<]{150}[^<]+)</\\1>";
-
     private static final Pattern PATTERN_LONG_XML_FIELD = Pattern.compile(MASK_LONG_XML_FIELD);
 
-    private static final String LONG_XML_PREFIX = "LONGXML_";
+    private LogMaskUtils() {}
+
 
     public static String maskFields(Object[] args) {
 
-        Object[] objects = Arrays.stream(args).map(o -> {
-            if (o != null) {
-                return o.toString();
-            }
-            return o;
-        }).filter(Objects::nonNull).toArray();
+        Object[] objects = Arrays.stream(args)
+                .filter(Objects::nonNull)
+                .map(Object::toString)
+                .toArray();
 
         String s = Arrays.toString(objects);
         return maskFields(s);
