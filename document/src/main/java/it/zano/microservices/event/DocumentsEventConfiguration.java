@@ -1,10 +1,7 @@
 package it.zano.microservices.event;
 
 import it.zano.microservices.config.RabbitConfiguration;
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.FanoutExchange;
-import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,20 +15,21 @@ import java.util.List;
 public class DocumentsEventConfiguration extends RabbitConfiguration {
 
     public final static String DOCUMENT_EXCHANGE = "documents";
-    public final static String DOCUMENT_QUEUE = "documents";
+    private final static String DOCUMENT_QUEUE = "documents";
 
-    protected final FanoutExchange documentExchange;
-    protected final Queue documentQueue;
+    private final FanoutExchange documentExchange;
+    private final Queue documentQueue;
 
     public DocumentsEventConfiguration() {
+        super();
         documentExchange = new FanoutExchange(DOCUMENT_EXCHANGE);
         documentQueue = new Queue(DOCUMENT_QUEUE);
     }
 
     @Bean
     @Override
-    public List<FanoutExchange> fanoutExchanges() {
-        List<FanoutExchange> fanoutExchanges = super.fanoutExchanges();
+    public List<AbstractExchange> exchanges() {
+        List<AbstractExchange> fanoutExchanges = super.exchanges();
         fanoutExchanges.add(documentExchange);
         return fanoutExchanges;
     }

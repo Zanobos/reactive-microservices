@@ -1,9 +1,6 @@
 package it.zano.microservices.config;
 
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.FanoutExchange;
-import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.annotation.RabbitListenerConfigurer;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -26,16 +23,16 @@ public abstract class RabbitConfiguration implements RabbitListenerConfigurer {
     public static final String FANOUT_ROUTING = "";
     public static final String ROLLBACK_QUEUE = "rollback";
 
-    protected final FanoutExchange rollbackExchange;
-    protected final Queue rollbackQueue;
+    private final FanoutExchange rollbackExchange;
+    private final Queue rollbackQueue;
 
-    public RabbitConfiguration() {
+    protected RabbitConfiguration() {
         rollbackExchange = new FanoutExchange(ROLLBACK_EXCHANGE);
         rollbackQueue = new Queue(ROLLBACK_QUEUE);
     }
 
-    protected List<FanoutExchange> fanoutExchanges() {
-        List<FanoutExchange> fanoutExchanges = new ArrayList<>();
+    protected List<AbstractExchange> exchanges() {
+        List<AbstractExchange> fanoutExchanges = new ArrayList<>();
         fanoutExchanges.add(rollbackExchange);
         return fanoutExchanges;
     }

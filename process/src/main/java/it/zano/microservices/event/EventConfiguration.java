@@ -1,10 +1,7 @@
 package it.zano.microservices.event;
 
 import it.zano.microservices.config.RabbitConfiguration;
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.FanoutExchange;
-import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -21,18 +18,19 @@ public class EventConfiguration extends RabbitConfiguration {
     public final static String DOCUMENT_EXCHANGE = "documents";
     public final static String DOCUMENT_QUEUE = "documents";
 
-    protected final FanoutExchange documentExchange;
-    protected final Queue documentQueue;
+    private final FanoutExchange documentExchange;
+    private final Queue documentQueue;
 
     public final static String OPROC_EXCHANGE = "oproc";
-    public final static String OPROC_QUEUE = "oproc-" + UUID.randomUUID().toString();
+    public final static String OPROC_QUEUE = "oproc-" + UUID.randomUUID().toString(); //must be public for the matcher to found it
     public final static String OPROC_QUEUE_MATCHER = "#{T(it.zano.microservices.event.EventConfiguration).OPROC_QUEUE}";
 
-    protected final FanoutExchange oprocExchange;
-    protected final Queue oprocQueue;
+    private final FanoutExchange oprocExchange;
+    private final Queue oprocQueue;
 
 
     public EventConfiguration() {
+        super();
         documentExchange = new FanoutExchange(DOCUMENT_EXCHANGE);
         documentQueue = new Queue(DOCUMENT_QUEUE);
         oprocExchange = new FanoutExchange(OPROC_EXCHANGE);
@@ -41,8 +39,8 @@ public class EventConfiguration extends RabbitConfiguration {
 
     @Bean
     @Override
-    public List<FanoutExchange> fanoutExchanges() {
-        List<FanoutExchange> fanoutExchanges = super.fanoutExchanges();
+    public List<AbstractExchange> exchanges() {
+        List<AbstractExchange> fanoutExchanges = super.exchanges();
         fanoutExchanges.add(documentExchange);
         fanoutExchanges.add(oprocExchange);
         return fanoutExchanges;
