@@ -53,6 +53,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
         </dependency>
+        <!-- Actuator module. Used to expose shutdown, health and info -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
         <!-- AOP module. Used for example for logging. No need for direct aspect-J dependency-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

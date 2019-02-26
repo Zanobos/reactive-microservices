@@ -10,6 +10,18 @@ spring:
   jpa:
     open-in-view: true
 
+management:
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include: "health, shutdown"
+  endpoint:
+    health:
+      enabled: true
+    shutdown:
+      enabled: true
+
 server:
   port: 12000
 

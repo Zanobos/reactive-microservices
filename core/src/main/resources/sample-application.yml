@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: @project.artifactId@
+    version: @project.version@
+    description: @project.description@
+  datasource:
+    url: "CHOOSE"
+    username: "CHOOSE"
+    password: "CHOOSE"
+  jpa:
+    open-in-view: true
+
+management:
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include: "health, shutdown"
+  endpoint:
+    health:
+      enabled: true
+    shutdown:
+      enabled: true
+
+server:
+  port: "CHOOSE"
